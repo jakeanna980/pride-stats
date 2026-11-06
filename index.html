@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#00005e">
+<title>Pride Basketball Stats</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<meta name="apple-mobile-web-app-title" content="Pride Stats">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Henderson Collegiate Pride basketball stat tracker">
+<style>
+:root{
+  --bg:#f3f4f9;--p1:#ffffff;--p2:#eef0f7;--p3:#e6e9f4;--hair:#e3e6f0;--hair2:#ccd1e2;
+  --ink:#0b0d2a;--mute:#5d6285;--dim:#9297b6;
+  --gold:#FFC72C;--hh:#9a6700;--acc:#0000a8;--navy:#00005e;--sel:#fff5d1;
+  --us:#3d4fd6;--opp:#d98200;
+  --pos:#12804a;--neg:#d32f2f;--hot:#e0600f;
+  --floor:#fbfbfe;--line:rgba(30,36,110,.42);
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased}
+body{background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:48px 48px;background-position:-1px -1px;background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(243,244,249,.35),rgba(243,244,249,.9) 65%);pointer-events:none;z-index:0}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation;border-radius:0}
+input,select,textarea{font:inherit;color:inherit}
+.hidden{display:none!important}
+.mono,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* ---------- header ---------- */
+header#top{position:sticky;top:0;z-index:20;display:flex;align-items:stretch;background:var(--navy);border-bottom:3px solid var(--gold);color:#fff;padding-top:env(safe-area-inset-top)}
+.brandbox{display:flex;align-items:center;gap:10px;padding:6px 16px 6px 12px;border-right:1px solid rgba(255,255,255,.14)}
+#logo{height:36px;width:auto}
+.brand{display:flex;flex-direction:column;line-height:1.1}
+.brand b{font-size:12px;letter-spacing:.14em;font-weight:800}
+.brand span{font-family:var(--mono);font-size:10px;color:#FFC72C;letter-spacing:.18em}
+#tabs{display:flex;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+#tabs::-webkit-scrollbar{display:none}
+#tabs button{padding:0 18px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#b8bbe8;border-right:1px solid rgba(255,255,255,.1);position:relative;white-space:nowrap;min-height:52px}
+#tabs button.on{color:#fff;background:rgba(255,255,255,.1)}
+#tabs button.on::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;background:#fff}
+#sync{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 14px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:#b8bbe8;text-transform:uppercase;border-left:1px solid rgba(255,255,255,.1)}
+#sync i{width:6px;height:6px;background:#6d71a8;display:inline-block}
+#sync.ok i{background:#3ecf8e}#sync.busy i{background:var(--gold)}#sync.warn i{background:#ff8a3d}
+main{position:relative;z-index:1;padding:14px;max-width:1440px;margin:0 auto}
+/* ---------- primitives ---------- */
+.pn{background:var(--p1);border:1px solid var(--hair2);margin-bottom:14px;position:relative}
+.ph{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--hair);min-height:46px;flex-wrap:wrap}
+.ph .t{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.ph .t b{color:var(--acc);font-weight:500;margin-right:8px}
+.ph .r{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pb{padding:14px}
+.pn.flush .pb{padding:0}
+h1{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:4px 0 14px;display:flex;align-items:baseline;gap:12px}
+h1 small{font-family:var(--mono);font-size:12px;color:var(--mute);font-weight:400;letter-spacing:.06em}
+.b{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 16px;border:1px solid var(--hair2);background:var(--p1);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border-radius:2px}
+.b:active{background:var(--p3)}
+.b.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+.b.dng{color:var(--neg);border-color:rgba(255,100,100,.35);background:transparent}
+.b.gh{background:transparent}
+.b.sm{min-height:34px;padding:0 12px;font-size:11px}
+.seg{display:inline-flex;border:1px solid var(--hair2)}
+.seg button{padding:0 12px;min-height:32px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border-right:1px solid var(--hair2)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.sel{background:var(--p2);border:1px solid var(--hair2);padding:0 10px;min-height:34px;font-family:var(--mono);font-size:12px;border-radius:0;-webkit-appearance:none;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:26px}
+label.f{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+label.f input,label.f select{padding:0 12px;min-height:46px;border:1px solid var(--hair2);background:var(--bg);font-family:var(--sans);font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink);border-radius:0}
+label.f input:focus,.cellin:focus{outline:2px solid var(--acc);outline-offset:-1px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.mute{color:var(--mute)}
+.note{font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.6;letter-spacing:.02em}
+.empty{padding:48px 16px;text-align:center;color:var(--mute)}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.g2>.pn{margin-bottom:0}
+.g2{margin-bottom:14px}
+.g32{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;margin-bottom:14px}
+.g32>.pn{margin-bottom:0}
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));border:1px solid var(--hair2);background:var(--p1);margin-bottom:14px}
+.kpi{padding:12px 14px;border-right:1px solid var(--hair)}
+.kpi:last-child{border-right:0}
+.kpi .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.kpi .v{font-family:var(--mono);font-size:26px;font-weight:500;margin-top:4px;letter-spacing:-.02em}
+.kpi .s{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:2px}
+.kpi.hl .v{color:var(--acc)}
+/* tables */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.st{border-collapse:collapse;width:100%;font-size:13px}
+table.st th{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);text-align:right;padding:9px 8px;border-bottom:1px solid var(--hair2);white-space:nowrap;background:var(--p1)}
+.tw.scroll th{position:sticky;top:0;z-index:1}
+table.st td{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;padding:9px 8px;border-bottom:1px solid var(--hair);white-space:nowrap}
+table.st td.n,table.st th.n{text-align:left;font-family:var(--sans)}
+table.st td.n{font-weight:600}
+table.st td.j{color:var(--dim);width:34px}
+table.st tr:hover td{background:rgba(0,0,60,.025)}
+table.st tr.tot td{border-top:1px solid var(--hair2);color:var(--ink);font-weight:700;background:var(--p2)}
+table.st tr.tot.o td{color:var(--mute)}
+.ls table.st td,.ls table.st th{font-size:18px;padding:10px 16px;text-align:center}
+.ls table.st th{font-size:12px}
+.ls table.st td.n,.ls table.st th.n{text-align:left;font-size:16px;font-weight:700;width:40%}
+.ls table.st tr:last-child td{border-bottom:0}
+table.st .hh{color:var(--hh)}
+table.st th.hh{color:var(--hh)}
+.bar{position:relative;display:inline-block;width:64px;height:6px;background:var(--hair);vertical-align:middle;margin-left:8px}
+.bar>i{position:absolute;left:0;top:0;bottom:0;background:var(--ink)}
+/* games */
+.glist{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.gc{background:var(--p1);border:1px solid var(--hair2);display:flex;flex-direction:column}
+.gc .gt{display:flex;justify-content:space-between;align-items:flex-start;padding:14px;border-bottom:1px solid var(--hair)}
+.gc .op{font-size:18px;font-weight:800;margin-top:4px}
+.gc .meta{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.08em}
+.gc .sc{font-family:var(--mono);font-size:24px;text-align:right}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;padding:3px 7px;border:1px solid currentColor;display:inline-block}
+.tag.W{color:var(--pos)}.tag.L{color:var(--neg)}.tag.T{color:var(--mute)}.tag.live{color:var(--hh)}
+.gc .gm{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--hair)}
+.gc .gm div{padding:8px 10px;border-right:1px solid var(--hair);font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:.08em}
+.gc .gm div:last-child{border-right:0}
+.gc .gm b{display:block;font-size:15px;color:var(--ink);font-weight:500;letter-spacing:0;margin-top:2px}
+.gc .ga{display:flex;gap:8px;padding:10px 14px}
+/* ---------- LIVE ---------- */
+.live{display:flex;flex-direction:column;gap:10px;height:calc(100vh - 82px);height:calc(100dvh - 82px)}
+.sb{display:grid;grid-template-columns:1fr auto 1fr;background:var(--navy);color:#fff;--hair:rgba(255,255,255,.12);--hair2:rgba(255,255,255,.18);--mute:#b8bbe8;--ink:#fff;--hh:#FFC72C;--p3:rgba(255,255,255,.12)}
+.sbt{display:flex;align-items:center;gap:12px;padding:8px 14px}
+.sbt.o{justify-content:flex-end}
+.sbt img{height:34px}
+.sbt .nm{font-size:12px;font-weight:800;letter-spacing:.14em;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sbt .tf{font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:.06em;margin-top:2px}
+.sbt .tf b{color:var(--hot);font-weight:500}
+.sbt .score{font-family:var(--mono);font-size:44px;font-weight:500;letter-spacing:-.04em;min-width:76px;text-align:center;line-height:1}
+.sbt.u .score{color:var(--gold)}
+.sbm{border-left:1px solid var(--hair2);border-right:1px solid var(--hair2);display:flex;flex-direction:column}
+.per{display:flex}
+.per button{min-width:48px;min-height:42px;font-family:var(--mono);font-size:12px;color:var(--mute);border-right:1px solid var(--hair)}
+.per button:last-child{border-right:0}
+.per button.on{background:var(--gold);color:var(--navy);font-weight:700}
+.hhl{border-top:1px solid var(--hair);padding:5px 10px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mute);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:440px}
+.hhl b{color:var(--hh);font-weight:500}
+.quick{display:flex;border:1px solid var(--hair2)}
+.quick button{min-width:42px;min-height:40px;font-family:var(--mono);font-size:12px;border-right:1px solid var(--hair2);color:var(--ink)}
+.quick button:last-child{border-right:0}
+.quick button:active{background:var(--p3)}
+.lvg{flex:1;display:grid;grid-template-columns:200px minmax(0,1fr) 280px;gap:10px;min-height:0}
+.lvc{display:flex;flex-direction:column;min-height:0;overflow-y:auto;border:1px solid var(--hair2);background:var(--p1)}
+.pc{display:grid;grid-template-columns:48px 1fr;align-items:center;text-align:left;border-bottom:1px solid var(--hair);min-height:64px;position:relative}
+.pc .nb{font-family:var(--mono);font-size:24px;text-align:center;color:var(--ink)}
+.pc .pn2{font-weight:700;font-size:14px;line-height:1.1}
+.pc .ps{font-family:var(--mono);font-size:10px;color:var(--mute);margin-top:4px;letter-spacing:.04em}
+.pc.on{background:var(--sel)}
+.pc.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc)}
+.pc.on .nb{color:var(--acc);font-weight:700}
+.pc.f4 .ps .pf{color:var(--hot)}.pc.f5{opacity:.5}.pc.f5 .ps .pf{color:var(--neg)}
+.pc.oc .nb{font-size:12px;letter-spacing:.1em;color:var(--opp)}
+.lvc .subs{margin-top:auto;border-top:1px solid var(--hair2);min-height:52px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.cw{border:1px solid var(--hair2);background:var(--p1);display:flex;flex-direction:column;min-height:0}
+.cw .ch{display:flex;align-items:center;gap:10px;padding:6px 10px;border-bottom:1px solid var(--hair);min-height:44px}
+.cw .hint{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.03em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cw .hint b{color:var(--acc);font-weight:500}
+.cw svg{flex:1;min-height:0;width:100%;touch-action:manipulation;display:block}
+.acts{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--hair2);background:var(--p1);overflow-y:auto;align-content:start}
+.acts h4{grid-column:1/-1;margin:0;padding:7px 12px;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--hair);background:var(--bg)}
+.ab{min-height:54px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:6px 12px;text-align:left;font-weight:700;font-size:14px}
+.ab:nth-of-type(even){border-right:0}
+.ab small{font-family:var(--mono);font-size:10px;font-weight:400;color:var(--hh);margin-top:2px;letter-spacing:.04em}
+.ab.ok{color:var(--pos)}.ab.no{color:var(--neg)}
+.ab.hu{background:rgba(255,199,44,.18)}
+.ab.hu small{color:var(--hh)}
+.ab.w{grid-column:1/-1;border-right:0}
+.ab:active,.pc:active,.quick button:active{background:var(--p3)}
+.lvl{display:flex;align-items:stretch;border:1px solid var(--hair2);background:var(--p1);min-height:50px}
+.lvl .undo{min-width:100px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;background:var(--acc);color:#fff;font-weight:700}
+.lvl .log{display:flex;flex:1;overflow-x:auto;min-width:0}
+.chip{display:flex;align-items:center;gap:8px;padding:0 6px 0 12px;border-right:1px solid var(--hair);white-space:nowrap;font-size:12px}
+.chip .pq{font-family:var(--mono);font-size:10px;color:var(--dim)}
+.chip.o{color:var(--opp)}
+.chip button{width:28px;height:28px;color:var(--dim);font-size:16px}
+.lvl .end{border-left:1px solid var(--hair2);padding:0 16px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+/* ---------- modal ---------- */
+#modal{position:fixed;inset:0;background:rgba(10,12,50,.32);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.sheet{background:var(--p1);border:1px solid var(--hair2);width:min(660px,100%);max-height:90vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,60,.22)}
+.sheet .sh{padding:14px 16px;border-bottom:1px solid var(--hair);font-weight:700;font-size:16px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.sheet .sh .tg{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--mute);font-weight:400;text-transform:uppercase}
+.sheet .sh .who{color:var(--acc)}
+.sheet .sbd{padding:16px}
+.sheet .sf{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--hair)}
+.sec{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:16px 0 8px}
+.sec:first-child{margin-top:0}
+.big2{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--hair2)}
+.big2 button{min-height:96px;font-size:20px;font-weight:800;letter-spacing:.2em}
+.big2 button:first-child{border-right:1px solid var(--hair2);color:var(--pos)}
+.big2 button:last-child{color:var(--neg)}
+.big2 button:active{background:var(--p3)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-top:1px solid var(--hair2);border-left:1px solid var(--hair2)}
+.pgrid button{min-height:62px;border-right:1px solid var(--hair2);border-bottom:1px solid var(--hair2);text-align:left;padding:8px 10px;font-weight:600;font-size:13px;line-height:1.2;position:relative}
+.pgrid button b{display:block;font-family:var(--mono);font-size:18px;font-weight:500}
+.pgrid button.on{background:var(--sel)}
+.pgrid button.on::before{content:"";position:absolute;inset:0;border:2px solid var(--acc);pointer-events:none}
+.pgrid button.on b{color:var(--acc)}
+.pgrid button.ob b{color:var(--opp);font-size:12px;letter-spacing:.1em;padding:3px 0}
+.pgrid button.nb{color:var(--mute)}
+.pgrid button:active{background:var(--p3)}
+.pgrid button .x{font-family:var(--mono);font-size:10px;color:var(--mute);font-weight:400;margin-top:3px;display:block}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--navy);color:#fff;border-left:4px solid var(--gold);padding:10px 16px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+#toast.show{opacity:1}
+.def{cursor:help;text-decoration:underline dotted;text-decoration-color:var(--dim);text-underline-offset:3px}
+.deftip{position:fixed;z-index:80;max-width:280px;background:var(--navy);color:#fff;padding:10px 12px;border-left:3px solid var(--gold);box-shadow:0 10px 30px rgba(0,0,60,.25);pointer-events:none;font-family:var(--sans);font-size:12.5px;line-height:1.45;letter-spacing:0;text-transform:none;font-weight:400;opacity:0;transition:opacity .12s}
+.deftip.show{opacity:1}
+.deftip b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--gold);margin-bottom:3px;font-weight:500}
+.deftip i{display:block;font-style:normal;font-family:var(--mono);font-size:10.5px;color:#b8bbe8;margin-top:5px}
+.tip{position:fixed;z-index:70;background:var(--navy);color:#fff;font-family:var(--mono);font-size:11px;padding:6px 9px;pointer-events:none;white-space:pre;line-height:1.5}
+/* hard hat */
+.hhb{display:flex;align-items:center;gap:18px;padding:14px 18px;background:var(--navy);color:#fff;border-left:6px solid var(--gold);margin-bottom:14px}
+.hhb .k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--gold)}
+.hhb .nm{font-size:22px;font-weight:800;margin-top:2px}
+.hhb .v{font-family:var(--mono);font-size:32px;color:var(--gold);margin-left:auto}
+.hhicon{width:42px;height:42px;flex:none}
+/* shot chart */
+.legend{display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mute)}
+.legend .ramp{width:120px;height:8px}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.chartbox{padding:10px;display:flex;justify-content:center}
+.chartbox svg{width:100%;max-width:560px;display:block}
+/* four factors */
+.ff{display:grid;grid-template-columns:120px 1fr 1fr;font-family:var(--mono);font-size:12px}
+.ff>div{padding:9px 12px;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:10px}
+.ff .h{color:var(--mute);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.ff .lab{color:var(--mute);font-size:11px}
+.ff .m{flex:1;height:4px;background:var(--hair);position:relative}
+.ff .m i{position:absolute;left:0;top:0;bottom:0}
+.ff .val{width:52px;text-align:right}
+.ff .best{color:var(--ink);font-weight:700}
+/* ---------- WHITEBOARD ---------- */
+.wb{display:grid;grid-template-columns:210px minmax(0,1fr) 210px;gap:10px;height:calc(100vh - 82px);height:calc(100dvh - 82px)}
+.wb .col{display:flex;flex-direction:column;border:1px solid var(--hair2);background:var(--p1);overflow-y:auto;min-height:0}
+.wb .stage{border:1px solid var(--hair2);background:var(--p1);display:flex;flex-direction:column;min-height:0}
+.wb svg{flex:1;min-height:0;width:100%;touch-action:none;user-select:none;-webkit-user-select:none;display:block}
+.tool{display:flex;align-items:center;gap:12px;padding:0 14px;min-height:48px;border-bottom:1px solid var(--hair);font-size:13px;font-weight:600;text-align:left;position:relative}
+.tool.on{background:var(--sel)}
+.tool.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc)}
+.tool svg{width:34px;height:18px;flex:none;color:var(--ink)}
+.colh{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);padding:9px 14px;border-bottom:1px solid var(--hair);background:var(--bg)}
+.sw{display:flex;gap:0;border-bottom:1px solid var(--hair)}
+.sw button{flex:1;height:42px;border-right:1px solid var(--hair);position:relative}
+.sw button:last-child{border-right:0}
+.sw button span{display:block;width:16px;height:16px;margin:auto}
+.sw button.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--acc)}
+.wbtn{min-height:44px;border-bottom:1px solid var(--hair);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:0 14px;color:var(--ink)}
+.wbtn:active{background:var(--p3)}
+.pl{display:block;width:100%;text-align:left;padding:12px 14px;border-bottom:1px solid var(--hair);position:relative}
+.pl .nm{font-weight:700;font-size:13px}
+.pl .mt{font-family:var(--mono);font-size:10px;color:var(--mute);margin-top:3px;letter-spacing:.06em}
+.pl.on{background:var(--sel)}.pl.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc)}
+.frames{display:flex;align-items:stretch;border-top:1px solid var(--hair2);min-height:46px}
+.frames .fd{min-width:46px;border-right:1px solid var(--hair);font-family:var(--mono);font-size:13px;color:var(--mute)}
+.frames .fd.on{background:var(--ink);color:var(--bg)}
+.frames .fa{padding:0 14px;border-right:1px solid var(--hair);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.frames .fa.pri{background:var(--acc);color:#fff;margin-left:auto;border-right:0;border-left:1px solid var(--hair)}
+.stage .sth{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--hair2);min-height:46px;padding-left:14px}
+.stage .sth .nm{font-weight:700;flex:1}
+.stage .sth .nm small{font-family:var(--mono);font-size:10px;color:var(--hot);letter-spacing:.1em;margin-left:8px;font-weight:400}
+.stage .sth button{align-self:stretch;padding:0 16px;border-left:1px solid var(--hair2);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.stage .sth button.pri{background:var(--acc);color:#fff}
+.tok{cursor:grab}
+@media (orientation:portrait),(max-width:900px){
+  .brand{display:none}
+  .lvg{grid-template-columns:1fr;grid-template-rows:auto auto auto}
+  .lvc.pl5{flex-direction:row;overflow-x:auto}
+  .lvc.pl5 .pc{min-width:140px;border-right:1px solid var(--hair);border-bottom:0}
+  .lvc .subs{margin-top:0;min-width:110px;border-top:0;border-left:1px solid var(--hair2)}
+  .cw svg{flex:none;height:36vh}
+  .acts{grid-template-columns:repeat(4,1fr)}
+  .ab:nth-of-type(even){border-right:1px solid var(--hair)}
+  .live{height:auto}
+  .sb{grid-template-columns:1fr 1fr}
+  .sbm{grid-column:1/-1;order:3;border:0;border-top:1px solid var(--hair2)}
+  .per{justify-content:center}
+  .sbt .score{font-size:34px;min-width:50px}
+  .sbt .nm{max-width:110px}
+  .wb{grid-template-columns:1fr;height:auto}
+  .wb svg{height:60vh;flex:none}
+  .g2,.g32{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header id="top">
+  <div class="brandbox"><img id="logo" alt="Henderson Collegiate Pride" src="data:image/png;base64,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"><div class="brand"><b>HENDERSON COLLEGIATE</b><span>PRIDE // ANALYTICS</span></div></div>
+  <nav id="tabs">
+    <button data-act="tab" data-v="games">Games</button>
+    <button data-act="tab" data-v="live">Live</button>
+    <button data-act="tab" data-v="box">Game Report</button>
+    <button data-act="tab" data-v="season">Season</button>
+    <button data-act="tab" data-v="board">Board</button>
+    <button data-act="tab" data-v="roster">Roster</button>
+  </nav>
+  <div id="sync"><i></i><span></span></div>
+</header>
+<main id="view"><div class="pn" style="margin-top:20px"><div class="pb"><b>The app didn't start in this viewer.</b><p class="note">Some previews (like the iPad Files app or an email attachment preview) don't run apps. Open it in Safari or Chrome. On iPad, open the website in Safari, then Share → Add to Home Screen.</p></div></div></main>
+<div id="modal" class="hidden"></div>
+<div id="toast"></div>
+<script>
+"use strict";
+/* ============================================================
+   CONSTANTS
+   ============================================================ */
+const LSK='hcpride-stats-v1';
+const DEFAULT_W={dreb:1,oreb:1.5,stl:1,blk:1,defl:1,loose:1,dive:2,charge:4};
+const HH_TYPES=['dreb','oreb','stl','blk','defl','loose','dive','charge'];
+const LABEL={fg:'FG',ft:'FT',oreb:'Off rebound',dreb:'Def rebound',ast:'Assist',stl:'Steal',blk:'Block',to:'Turnover',pf:'Foul',defl:'Deflection',loose:'Loose ball',dive:'Floor dive',charge:'Charge taken'};
+const HHICON=`<svg viewBox="0 0 64 64" class="hhicon" aria-hidden="true"><path d="M10 42c0-14 9-25 22-25s22 11 22 25z" fill="#FFC72C" stroke="#00005e" stroke-width="2.5"/><path d="M28 17h8v25h-8z" fill="#f2a900" stroke="#00005e" stroke-width="2.5"/><rect x="4" y="42" width="56" height="7" fill="#FFC72C" stroke="#00005e" stroke-width="2.5"/></svg>`;
+const uid6=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-3);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const f1=n=>(n==null||!isFinite(n))?'–':(Math.round(n*10)/10).toFixed(1);
+const f2=n=>(n==null||!isFinite(n))?'–':n.toFixed(2);
+const pc=n=>(n==null||!isFinite(n))?'–':(n*100).toFixed(1);
+const pct=(m,a)=>a?(m/a*100).toFixed(1):'–';
+const sgn=n=>(n==null||!isFinite(n))?'–':(n>0?'+':'')+(Math.round(n*10)/10).toFixed(1);
+const sgnI=n=>(n>0?'+':'')+n;
+const cls=n=>n>0?'pos':n<0?'neg':'';
+const $=s=>document.querySelector(s);
+const view=$('#view');
+
+/* ============================================================
+   STATE & STORAGE  (same keys as v1 so existing data carries over)
+   ============================================================ */
+let S={main:{team:'Pride',roster:[],weights:{...DEFAULT_W},curGame:null,deleted:[],updatedAt:0},games:{},plays:{}};
+let pendingKeys=new Set();
+let db=null,uid=null,downloads=null,flushTimer=null,flushing=false;
+function saveLocal(){try{localStorage.setItem(LSK,JSON.stringify({S,pending:[...pendingKeys]}))}catch(e){}}
+function loadLocal(){try{const raw=localStorage.getItem(LSK);if(raw){const o=JSON.parse(raw);if(o&&o.S){S=o.S;pendingKeys=new Set(o.pending||[])}}}catch(e){}normalize()}
+function normalize(){S.main=Object.assign({team:'Pride',roster:[],curGame:null,deleted:[],updatedAt:0},S.main||{});S.main.weights={...DEFAULT_W,...(S.main.weights||{})};S.games=S.games||{};S.plays=S.plays||{}}
+function objFor(k){if(k==='main')return S.main;if(k.startsWith('g_'))return S.games[k.slice(2)];if(k.startsWith('p_'))return S.plays[k.slice(2)]}
+function setObj(k,v){if(k==='main')S.main=v;else if(k.startsWith('g_')){if(v)S.games[k.slice(2)]=v;else delete S.games[k.slice(2)]}else if(k.startsWith('p_')){if(v)S.plays[k.slice(2)]=v;else delete S.plays[k.slice(2)]}}
+function touch(k){const o=objFor(k);if(o)o.updatedAt=Date.now();pendingKeys.add(k);saveLocal();scheduleFlush()}
+function removeObj(k){setObj(k,undefined);if(!S.main.deleted.includes(k))S.main.deleted.push(k);touch(k);touch('main')}
+function setSync(st){const el=$('#sync');const m={saved:['ok','Synced'],saving:['busy','Saving'],local:['ok','Saved on device'],retry:['warn','Offline · retrying'],loading:['busy','Loading']}[st]||['',''];el.className=m[0];el.querySelector('span').textContent=m[1];el.title=st==='local'?'Cloud sync unavailable – data is kept in this browser. Use Backup on the Roster tab.':''}
+function scheduleFlush(ms=1200){clearTimeout(flushTimer);if(!db){setSync('local');return}setSync('saving');flushTimer=setTimeout(flush,ms)}
+async function flush(){
+  if(!db||!uid){setSync('local');return}
+  if(flushing){scheduleFlush(800);return}
+  flushing=true;let failed=false;
+  for(const k of [...pendingKeys]){
+    const o=objFor(k);const stamp=o?o.updatedAt:'del';const ref=db.collection('data/users/'+uid).doc(k);
+    try{if(o)await ref.set(clone(o));else await ref.delete();const now=objFor(k);if((now?now.updatedAt:'del')===stamp)pendingKeys.delete(k)}
+    catch(e){failed=true;if(e&&e.code==='quota_exceeded')toast('Cloud storage full – delete old games or plays');if(e&&e.code==='invalid_argument'){pendingKeys.delete(k);toast('Could not save '+k)}break}
+  }
+  flushing=false;saveLocal();
+  if(failed){setSync('retry');clearTimeout(flushTimer);flushTimer=setTimeout(flush,8000)}
+  else if(pendingKeys.size)scheduleFlush(400);else setSync('saved');
+}
+function withTimeout(p,ms){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej({code:'timeout'}),ms))])}
+async function connect(){
+  try{
+    if(!window.claude||!window.claude.use){setSync('local');maybeSeed();return}
+    setSync('loading');
+    const [d,u]=await withTimeout(Promise.all([claude.use('db'),claude.use('user')]),8000);
+    claude.use('downloads').then(x=>{downloads=x}).catch(()=>{});
+    if(!d||!u){setSync('local');maybeSeed();return}
+    const id=await u.id();if(!id){setSync('local');maybeSeed();return}
+    const snap=await withTimeout(d.collection('data/users/'+id).get(),10000);
+    db=d;uid=id;merge(snap.docs);maybeSeed();
+    if(pendingKeys.size)scheduleFlush(200);else setSync('saved');
+    if(tab!=='board')render();
+  }catch(e){setSync('local');maybeSeed()}
+}
+let seededLocally=false;
+function merge(docs){
+  if(seededLocally){const real=docs.some(d=>d.exists&&(d.id!=='main'||((d.data().roster||[]).length)||d.data().demoDismissed));
+    if(real){S={main:{},games:{},plays:{}};pendingKeys=new Set();normalize()}seededLocally=false}
+  const remote={};docs.forEach(s=>{if(s.exists)remote[s.id]=clone(s.data())});
+  const tomb=new Set([...(S.main.deleted||[]),...((remote.main&&remote.main.deleted)||[])]);
+  if(remote.main&&(remote.main.updatedAt||0)>(S.main.updatedAt||0)){S.main=remote.main;pendingKeys.delete('main')}
+  else if(!remote.main||(S.main.updatedAt||0)>(remote.main.updatedAt||0))pendingKeys.add('main');
+  S.main.deleted=[...tomb];normalize();
+  for(const k of tomb){setObj(k,undefined);if(remote[k])pendingKeys.add(k)}
+  for(const [k,v] of Object.entries(remote)){if(k==='main'||tomb.has(k))continue;const loc=objFor(k);
+    if(!loc||(v.updatedAt||0)>(loc.updatedAt||0)){setObj(k,v);pendingKeys.delete(k)}else if((loc.updatedAt||0)>(v.updatedAt||0))pendingKeys.add(k)}
+  for(const id in S.games)if(!remote['g_'+id])pendingKeys.add('g_'+id);
+  for(const id in S.plays)if(!remote['p_'+id])pendingKeys.add('p_'+id);
+  saveLocal();
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const roster=()=>S.main.roster;
+const P=id=>roster().find(p=>p.id===id);
+const lastName=n=>{const parts=String(n||'').trim().split(/\s+/);return parts.length>1?parts[0][0]+'. '+parts.slice(1).join(' '):parts[0]||''};
+const pname=id=>{const p=P(id);return p?`#${p.num} ${lastName(p.name)}`:'Player'};
+const pnum=id=>{const p=P(id);return p?'#'+p.num:'?'};
+const game=()=>S.games[S.main.curGame];
+const oppName=g=>g?(g.opp||'Opponent'):'Opponent';
+const perLabel=p=>p<=4?'Q'+p:'OT'+(p-4>1?p-4:'');
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1600)}
+let tipEl=null;
+function showTip(e,text){if(!tipEl){tipEl=document.createElement('div');tipEl.className='tip';document.body.appendChild(tipEl)}tipEl.textContent=text;tipEl.style.display='block';tipEl.style.left=Math.min(e.clientX+14,innerWidth-tipEl.offsetWidth-8)+'px';tipEl.style.top=Math.max(8,e.clientY-tipEl.offsetHeight-10)+'px'}
+function hideTip(){if(tipEl)tipEl.style.display='none'}
+function bindTips(root){if(!root)return;root.querySelectorAll('[data-tip]').forEach(el=>{el.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')showTip(e,el.dataset.tip)});el.addEventListener('pointermove',e=>{if(e.pointerType==='mouse')showTip(e,el.dataset.tip)});el.addEventListener('pointerleave',hideTip);el.addEventListener('click',e=>{if(e.pointerType!=='mouse'&&!el.closest('#livecourt')){showTip(e,el.dataset.tip);clearTimeout(el._t);el._t=setTimeout(hideTip,2200)}})})}
+
+/* ============================================================
+   COURT GEOMETRY  (units = 0.1 ft; basket at top, NFHS 19'9" arc)
+   ============================================================ */
+const BX=250,BY=52.5,R3=197.5;
+function isThree(x,y){if(y<=BY)return Math.abs(x-BX)>=R3;return Math.hypot(x-BX,y-BY)>=R3}
+const ZONES=[
+  {k:'RIM',n:'Restricted / rim',g:'rim',lx:250,ly:80},
+  {k:'PAINT',n:'Paint (non-rim)',g:'paint',lx:250,ly:150},
+  {k:'MIDL',n:'Mid-range left',g:'mid',lx:118,ly:118},
+  {k:'MIDC',n:'Mid-range center',g:'mid',lx:250,ly:222},
+  {k:'MIDR',n:'Mid-range right',g:'mid',lx:382,ly:118},
+  {k:'C3L',n:'Corner 3 left',g:'c3',lx:27,ly:80},
+  {k:'C3R',n:'Corner 3 right',g:'c3',lx:473,ly:80},
+  {k:'AB3L',n:'Wing 3 left',g:'ab3',lx:80,ly:300},
+  {k:'AB3C',n:'Top of key 3',g:'ab3',lx:250,ly:345},
+  {k:'AB3R',n:'Wing 3 right',g:'ab3',lx:420,ly:300}];
+const ZMAP=Object.fromEntries(ZONES.map(z=>[z.k,z]));
+const GROUPS=[{g:'rim',n:'Rim'},{g:'paint',n:'Paint'},{g:'mid',n:'Mid-range'},{g:'c3',n:'Corner 3'},{g:'ab3',n:'Above-break 3'}];
+function zoneKey(x,y){const dx=x-BX,dy=y-BY,d=Math.hypot(dx,dy);const ang=Math.atan2(dx,Math.max(dy,0.001))*180/Math.PI;
+  if(isThree(x,y)){if(y<=140)return dx<0?'C3L':'C3R';return ang<-28?'AB3L':ang>28?'AB3R':'AB3C'}
+  if(d<=40)return 'RIM';if(Math.abs(dx)<=60&&y<=190)return 'PAINT';return ang<-36?'MIDL':ang>36?'MIDR':'MIDC'}
+function courtLines(){return `<g class="lines" fill="none" stroke="var(--line)" stroke-width="2">
+<rect x="1" y="1" width="498" height="468"/>
+<rect x="190" y="0" width="120" height="190"/>
+<path d="M190 190 A60 60 0 0 0 310 190"/>
+<path d="M190 190 A60 60 0 0 1 310 190" stroke-dasharray="6 6"/>
+<line x1="220" y1="40" x2="280" y2="40" stroke-width="3"/>
+<circle cx="250" cy="52.5" r="7.5" stroke="#ff7a1a"/>
+<path d="M210 52.5 A40 40 0 0 0 290 52.5" stroke-dasharray="2 4"/>
+<path d="M52.5 0 L52.5 52.5 A197.5 197.5 0 0 0 447.5 52.5 L447.5 0"/>
+<path d="M190 470 A60 60 0 0 1 310 470"/>
+<g stroke-width="1" stroke="rgba(176,184,255,.18)">${[100,200,300,400].map(y=>`<line x1="-6" x2="0" y1="${y}" y2="${y}"/><line x1="500" x2="506" y1="${y}" y2="${y}"/>`).join('')}</g>
+</g>`}
+function courtSVG(inner,{id='',under=''}={}){return `<svg ${id?`id="${id}"`:''} class="court" viewBox="-8 -8 516 486" preserveAspectRatio="xMidYMid meet"><rect x="0" y="0" width="500" height="470" fill="var(--floor)"/>${under}${courtLines()}${inner}</svg>`}
+function fullCourtLinesH(){const l=courtLines();return `<g transform="matrix(0,1,1,0,0,0)">${l}</g><g transform="matrix(0,1,-1,0,940,0)">${l}</g>`}
+function svgPoint(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
+
+/* ============================================================
+   COLOR SCALES
+   ============================================================ */
+// diverging around 1.00 points per shot: cold blue -> neutral gray -> hot orange
+const C_COLD=[47,98,224],C_MID=[208,211,226],C_HOT=[238,98,10];
+function lerp(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
+function ppsColor(pps,alpha=1){const lo=0.5,mid=1.0,hi=1.5;let c;
+  if(pps<=mid){const t=Math.max(0,Math.min(1,(pps-lo)/(mid-lo)));c=lerp(C_COLD,C_MID,t)}else{const t=Math.max(0,Math.min(1,(pps-mid)/(hi-mid)));c=lerp(C_MID,C_HOT,t)}
+  return `rgba(${c[0]},${c[1]},${c[2]},${alpha})`}
+const RAMP_DIV=`<svg class="ramp" viewBox="0 0 120 8" preserveAspectRatio="none"><defs><linearGradient id="gdv"><stop offset="0" stop-color="rgb(${C_COLD})"/><stop offset=".5" stop-color="rgb(${C_MID})"/><stop offset="1" stop-color="rgb(${C_HOT})"/></linearGradient></defs><rect width="120" height="8" fill="url(#gdv)"/></svg>`;
+// sequential (volume): transparent -> gold -> near white
+function seqColor(t){t=Math.max(0,Math.min(1,t));const a=[150,165,240],b=[61,79,214],c=[0,0,110];const col=t<.55?lerp(a,b,t/.55):lerp(b,c,(t-.55)/.45);return [col[0],col[1],col[2],Math.round(255*Math.min(1,t*1.5)*0.9)]}
+const RAMP_SEQ=`<svg class="ramp" viewBox="0 0 120 8" preserveAspectRatio="none"><defs><linearGradient id="gsq"><stop offset="0" stop-color="rgba(150,165,240,0)"/><stop offset=".55" stop-color="#3d4fd6"/><stop offset="1" stop-color="#00006e"/></linearGradient></defs><rect width="120" height="8" fill="url(#gsq)"/></svg>`;
+
+/* ============================================================
+   STATS ENGINE
+   ============================================================ */
+const blank=()=>({pts:0,fgm:0,fga:0,tpm:0,tpa:0,ftm:0,fta:0,oreb:0,dreb:0,ast:0,stl:0,blk:0,to:0,pf:0,defl:0,loose:0,dive:0,charge:0,pm:0,hh:0});
+const tb=()=>({pts:0,fga:0,fta:0,oreb:0,to:0});
+function computeBox(g){
+  const w=S.main.weights;const Pl={};const us=blank(),opp=blank();const shots={us:[],opp:[]};const lineups={};const perFouls={};
+  (g.played||[]).forEach(id=>{Pl[id]=Pl[id]||blank()});
+  for(const e of g.events){
+    if(e.type==='sub')continue;
+    const t=e.team==='opp'?opp:us;const p=(e.team==='us'&&e.pid)?(Pl[e.pid]=Pl[e.pid]||blank()):null;
+    const add=(k,v=1)=>{t[k]+=v;if(p)p[k]+=v};
+    let sp=0;
+    if(e.type==='fg'){add('fga');if(e.three)add('tpa');if(e.made){add('fgm');if(e.three)add('tpm');sp=e.three?3:2;add('pts',sp)}if(e.x!=null)shots[e.team].push(e)}
+    else if(e.type==='ft'){add('fta');if(e.made){add('ftm');sp=1;add('pts',1)}}
+    else if(t[e.type]!==undefined)add(e.type);
+    if(e.type==='pf'){const k=e.team+'_'+Math.min(e.p,4);perFouls[k]=(perFouls[k]||0)+1}
+    if(HH_TYPES.includes(e.type))add('hh',w[e.type]||0);
+    if(e.on&&e.on.length){
+      const key=[...e.on].sort().join(',');const L=lineups[key]=lineups[key]||{ids:[...e.on],us:tb(),op:tb(),pf:0,pa:0};
+      const side=e.team==='us'?L.us:L.op;
+      if(e.type==='fg')side.fga++;else if(e.type==='ft')side.fta++;else if(e.type==='oreb')side.oreb++;else if(e.type==='to')side.to++;
+      if(sp){side.pts+=sp;if(e.team==='us')L.pf+=sp;else L.pa+=sp;
+        const diff=e.team==='us'?sp:-sp;for(const id of e.on){(Pl[id]=Pl[id]||blank()).pm+=diff}}
+    }
+  }
+  let best=0;for(const id in Pl)best=Math.max(best,Pl[id].hh);
+  const winners=best>0?Object.keys(Pl).filter(id=>Pl[id].hh===best):[];
+  return {Pl,us,opp,shots,lineups,winners,best,perFouls};
+}
+const possOf=t=>Math.max(0,t.fga-t.oreb+t.to+0.44*t.fta);
+function adv(t,o){
+  const poss=possOf(t),oposs=possOf(o);
+  return {poss,
+    efg:t.fga?(t.fgm+0.5*t.tpm)/t.fga:null,
+    ts:(t.fga+0.44*t.fta)?t.pts/(2*(t.fga+0.44*t.fta)):null,
+    tov:poss?t.to/poss:null,
+    orb:(t.oreb+o.dreb)?t.oreb/(t.oreb+o.dreb):null,
+    ftr:t.fga?t.ftm/t.fga:null,
+    tpar:t.fga?t.tpa/t.fga:null,
+    ortg:poss?t.pts/poss*100:null,
+    drtg:oposs?o.pts/oposs*100:null,
+    pps:t.fga?(t.pts-t.ftm)/t.fga:null,
+    astr:t.fgm?t.ast/t.fgm:null,
+    hh100:poss?t.hh/poss*100:null};
+}
+function gameScore(s){return s.pts+0.4*s.fgm-0.7*s.fga-0.4*(s.fta-s.ftm)+0.7*s.oreb+0.3*s.dreb+s.stl+0.7*s.ast+0.7*s.blk-0.4*s.pf-s.to}
+function lineupRtg(L){const up=possOf(L.us),op=possOf(L.op);const poss=(up+op)/2;return {poss,ortg:up?L.us.pts/up*100:null,drtg:op?L.op.pts/op*100:null,net:(up&&op)?L.us.pts/up*100-L.op.pts/op*100:null}}
+function onOff(lineups,id){const on={us:tb(),op:tb()},off={us:tb(),op:tb()};
+  for(const L of Object.values(lineups)){const tgt=L.ids.includes(id)?on:off;for(const s of ['us','op'])for(const k in tgt[s])tgt[s][k]+=L[s][k]}
+  const r=x=>{const up=possOf(x.us),op=possOf(x.op);return (up>=3&&op>=3)?x.us.pts/up*100-x.op.pts/op*100:null};
+  return {on:r(on),off:r(off),poss:(possOf(on.us)+possOf(on.op))/2}}
+function zoneStats(list){const z={};ZONES.forEach(Z=>z[Z.k]={m:0,a:0,pts:0});const g={};GROUPS.forEach(G=>g[G.g]={m:0,a:0,pts:0});
+  list.forEach(e=>{const k=zoneKey(e.x,e.y);const v=e.made?(e.three?3:2):0;z[k].a++;z[k].pts+=v;if(e.made)z[k].m++;const G=g[ZMAP[k].g];G.a++;G.pts+=v;if(e.made)G.m++});return {z,g,n:list.length}}
+function gameResult(g){const b=computeBox(g);const r=b.us.pts>b.opp.pts?'W':b.us.pts<b.opp.pts?'L':'T';return {b,r}}
+
+/* ============================================================
+   SHOT CHART RENDERERS: hex | heat | zones | dots
+   ============================================================ */
+function shotDots(list,team,small){const op=team==='opp';const c=op?'var(--opp)':'var(--us)';const r=small?6:8;
+  return list.map(e=>{const tt=esc(`${op?oppName(currentReportGame()):pname(e.pid)}\n${e.made?'MADE':'MISSED'} ${e.three?'3':'2'} · ${ZMAP[zoneKey(e.x,e.y)].n}`);
+  return e.made?`<circle cx="${e.x}" cy="${e.y}" r="${r}" fill="${c}" stroke="#fff" stroke-width="2" data-tip="${tt}"/>`
+  :`<g stroke="${c}" stroke-width="2.5" data-tip="${tt}"><line x1="${e.x-r+1}" y1="${e.y-r+1}" x2="${e.x+r-1}" y2="${e.y+r-1}"/><line x1="${e.x+r-1}" y1="${e.y-r+1}" x2="${e.x-r+1}" y2="${e.y+r-1}"/><circle cx="${e.x}" cy="${e.y}" r="${r+4}" fill="transparent" stroke="none"/></g>`}).join('')}
+function hexbin(list){
+  const R=17,W=Math.sqrt(3)*R,H=1.5*R;const bins={};
+  for(const e of list){let best=null,bd=1e9;const r0=Math.round(e.y/H);
+    for(let r=r0-1;r<=r0+1;r++){const off=(r&1)?W/2:0;const c0=Math.round((e.x-off)/W);for(let c=c0-1;c<=c0+1;c++){const cx=c*W+off,cy=r*H;const d=(e.x-cx)**2+(e.y-cy)**2;if(d<bd){bd=d;best=[r,c,cx,cy]}}}
+    const k=best[0]+'_'+best[1];const b=bins[k]=bins[k]||{cx:best[2],cy:best[3],n:0,m:0,pts:0,t:0};b.n++;b.pts+=e.made?(e.three?3:2):0;if(e.made)b.m++;if(e.three)b.t++}
+  return {bins:Object.values(bins),R};
+}
+function hexPath(cx,cy,r){let d='';for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);d+=(i?'L':'M')+(cx+r*Math.cos(a)).toFixed(1)+' '+(cy+r*Math.sin(a)).toFixed(1)}return d+'Z'}
+function hexLayer(list){
+  if(!list.length)return '';const {bins,R}=hexbin(list);const max=Math.max(...bins.map(b=>b.n));
+  const mean=list.reduce((s,e)=>s+(e.made?(e.three?3:2):0),0)/list.length;const K=2;
+  return `<g clip-path="url(#cclip)">${bins.sort((a,b)=>a.n-b.n).map(b=>{const sm=(b.pts+K*mean)/(b.n+K);const s=Math.max(.38,Math.sqrt(b.n/max));
+    return `<path d="${hexPath(b.cx,b.cy,R*0.94*s)}" fill="${ppsColor(sm,.95)}" stroke="#fff" stroke-width="1" data-tip="${esc(`${b.n} FGA · ${b.m}-${b.n} (${pct(b.m,b.n)}%)\n${(b.pts/b.n).toFixed(2)} pts/shot`)}"/>`}).join('')}</g>`;
+}
+const CLIP=`<defs><clipPath id="cclip"><rect x="0" y="0" width="500" height="470"/></clipPath></defs>`;
+function heatImage(list){
+  if(!list.length)return '';const cs=5,GW=100,GH=94,sig=22,rad=Math.ceil(3*sig/cs);const grid=new Float32Array(GW*GH);
+  for(const e of list){const gx=e.x/cs,gy=e.y/cs;const x0=Math.max(0,Math.floor(gx-rad)),x1=Math.min(GW-1,Math.ceil(gx+rad)),y0=Math.max(0,Math.floor(gy-rad)),y1=Math.min(GH-1,Math.ceil(gy+rad));
+    for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const dx=(x+.5-gx)*cs,dy=(y+.5-gy)*cs;grid[y*GW+x]+=Math.exp(-(dx*dx+dy*dy)/(2*sig*sig))}}
+  let max=0;for(const v of grid)max=Math.max(max,v);
+  const cv=document.createElement('canvas');cv.width=GW;cv.height=GH;const ctx=cv.getContext('2d');const img=ctx.createImageData(GW,GH);
+  for(let i=0;i<grid.length;i++){const c=seqColor(Math.pow(grid[i]/max,0.55));img.data.set(c,i*4)}ctx.putImageData(img,0,0);
+  return `<image href="${cv.toDataURL()}" x="0" y="0" width="500" height="470" preserveAspectRatio="none" style="image-rendering:auto"/>`;
+}
+let zoneCache={};
+function zoneImage(list){
+  const zs=zoneStats(list);const tot=list.length;
+  const key=ZONES.map(Z=>zs.z[Z.k].a+':'+zs.z[Z.k].pts).join('|');
+  let url=zoneCache[key];
+  if(!url){const cv=document.createElement('canvas');const sc=1;cv.width=500;cv.height=470;const ctx=cv.getContext('2d');const img=ctx.createImageData(500,470);
+    const col={};ZONES.forEach(Z=>{const s=zs.z[Z.k];if(!s.a){col[Z.k]=[240,241,247,255];return}const m=ppsColor(s.pts/s.a,1).match(/\d+/g).map(Number);const a=0.35+0.6*Math.min(1,s.a/Math.max(1,tot*0.25));col[Z.k]=[m[0],m[1],m[2],Math.round(255*a)]});
+    for(let y=0;y<470;y++)for(let x=0;x<500;x++){const k=zoneKey(x+.5,y+.5);img.data.set(col[k],(y*500+x)*4)}
+    ctx.putImageData(img,0,0);url=zoneCache[key]=cv.toDataURL()}
+  const labels=ZONES.map(Z=>{const s=zs.z[Z.k];const small=Z.g==='c3';
+    return `<g data-tip="${esc(`${Z.n}\n${s.m}-${s.a} · ${pct(s.m,s.a)}% FG\n${s.a?(s.pts/s.a).toFixed(2):'–'} pts/shot · ${tot?Math.round(s.a/tot*100):0}% of shots`)}"><rect x="${Z.lx-(small?24:40)}" y="${Z.ly-22}" width="${small?48:80}" height="44" fill="transparent"/>
+    <text x="${Z.lx}" y="${Z.ly-2}" text-anchor="middle" font-family="var(--mono)" font-size="${small?11:15}" fill="var(--ink)" font-weight="700" stroke="rgba(255,255,255,.85)" stroke-width="3" paint-order="stroke">${s.a?pct(s.m,s.a)+(small?'':'%'):'–'}</text>
+    <text x="${Z.lx}" y="${Z.ly+13}" text-anchor="middle" font-family="var(--mono)" font-size="${small?8:10}" fill="var(--mute)" stroke="rgba(255,255,255,.85)" stroke-width="2.5" paint-order="stroke">${s.m}/${s.a}</text></g>`}).join('');
+  return {under:`<image href="${url}" x="0" y="0" width="500" height="470" preserveAspectRatio="none"/>`,over:labels};
+}
+function shotChart(list,team,mode,id){
+  if(mode==='hex')return courtSVG(hexLayer(list),{id,under:CLIP});
+  if(mode==='heat')return courtSVG(shotDots(list,team,true).replace(/<circle /g,'<circle opacity=".0" ').replace(/<g stroke/g,'<g opacity="0" stroke'),{id,under:heatImage(list)});
+  if(mode==='zones'){const z=zoneImage(list);return courtSVG(z.over,{id,under:z.under})}
+  return courtSVG(shotDots(list,team),{id});
+}
+function chartLegend(mode,team){
+  if(mode==='hex')return `<div class="legend"><span>COLOR = PTS/SHOT</span><span>0.5</span>${RAMP_DIV}<span>1.5</span><span>SIZE = VOLUME</span></div>`;
+  if(mode==='heat')return `<div class="legend"><span>SHOT DENSITY</span><span>LOW</span>${RAMP_SEQ}<span>HIGH</span></div>`;
+  if(mode==='zones')return `<div class="legend"><span>COLOR = PTS/SHOT</span><span>0.5</span>${RAMP_DIV}<span>1.5</span><span>OPACITY = VOLUME</span></div>`;
+  const c=team==='opp'?'var(--opp)':'var(--us)';return `<div class="legend"><span><svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="${c}"/></svg> MADE</span><span><svg width="12" height="12"><path d="M2 2L10 10M10 2L2 10" stroke="${c}" stroke-width="2"/></svg> MISSED</span></div>`;
+}
+const modeSeg=(cur,act)=>`<span class="seg">${[['hex','Hex'],['heat','Heat'],['zones','Zones'],['dots','Dots']].map(([k,l])=>`<button class="${cur===k?'on':''}" data-act="${act}" data-v="${k}">${l}</button>`).join('')}</span>`;
+function zoneTable(list){const zs=zoneStats(list);const n=zs.n||1;
+  const rows=GROUPS.map(G=>{const s=zs.g[G.g];return `<tr><td class="n">${G.n}</td><td>${s.m}-${s.a}</td><td>${pct(s.m,s.a)}</td><td>${s.a?(s.pts/s.a).toFixed(2):'–'}</td><td>${Math.round(s.a/n*100)}%<span class="bar"><i style="width:${s.a/n*100}%;background:${s.a?ppsColor(s.pts/s.a):'transparent'}"></i></span></td></tr>`}).join('');
+  return `<table class="st"><tr><th class="n">Shot type</th><th>FGM-A</th><th>FG%</th><th>PPS</th><th>Share</th></tr>${rows}</table>`}
+
+
+/* ============================================================
+   GLOSSARY  (hover a stat title, or tap it on iPad)
+   ============================================================ */
+const HHF=()=>HH_TYPES.map(t=>`${LABEL[t]} ${S.main.weights[t]}`).join(' · ');
+const GLOSS={
+ 'PTS':['Points','Total points scored.'],
+ 'FG':['Field goals','Shots made – shots attempted (2s and 3s, not free throws).'],
+ 'FGM-A':['Field goals','Shots made – shots attempted.'],
+ 'FG%':['Field goal %','Made shots ÷ attempted shots.','FGM ÷ FGA'],
+ '3PT':['3-pointers','3-pointers made – attempted.'],
+ '3PM-A':['3-pointers','3-pointers made – attempted.'],
+ '3P%':['3-point %','3-pointers made ÷ attempted.'],
+ 'FT':['Free throws','Free throws made – attempted.'],
+ 'FT%':['Free throw %','Free throws made ÷ attempted.'],
+ 'OREB':['Offensive rebounds','Rebounds of your own team’s misses. Worth 1.5 hard hat points by default.'],
+ 'DREB':['Defensive rebounds','Rebounds of the opponent’s misses.'],
+ 'REB':['Rebounds','Offensive + defensive rebounds.'],
+ 'AST':['Assists','Passes that lead directly to a made basket.'],
+ 'STL':['Steals','Taking the ball from the opponent (causes their turnover).'],
+ 'BLK':['Blocks','Blocked shot attempts.'],
+ 'TO':['Turnovers','Possessions lost without a shot (bad pass, travel, stolen, offensive foul…).'],
+ 'PF':['Personal fouls','Fouls committed. 4 = warning color, 5 = fouled out.'],
+ '+/-':['Plus / minus','Team’s scoring margin while this player was on the floor.'],
+ 'GP':['Games played','Games the player appeared in.'],
+ 'TS%':['True shooting %','Scoring efficiency counting 2s, 3s and free throws together. ~55% is very good in high school.','PTS ÷ (2 × (FGA + 0.44 × FTA))'],
+ 'EFG%':['Effective FG %','FG% that gives 3-pointers 50% extra credit, since they’re worth more.','(FGM + 0.5 × 3PM) ÷ FGA'],
+ 'PPS':['Points per shot','Points scored per field goal attempt (free throws not included). 1.00 = break-even.','(PTS − FTM) ÷ FGA'],
+ 'USE%':['Usage share','Share of the team’s possessions this player finished with a shot, free throws or a turnover.','(FGA + 0.44 FTA + TO) ÷ team same'],
+ '3PA RATE':['3-point attempt rate','Share of shots that are 3-pointers.','3PA ÷ FGA'],
+ 'FT RATE':['Free throw rate','How often you get to the line, as free throws made per shot. One of the four factors.','FTM ÷ FGA'],
+ 'AST/TO':['Assist-to-turnover ratio','Assists for every turnover. Above 1.5 is good for a guard.'],
+ 'GMSC':['Game Score','One-number summary of a box score (John Hollinger). ~10 is average, 20+ is a big game.','PTS + 0.4 FGM − 0.7 FGA − 0.4 missed FT + 0.7 OREB + 0.3 DREB + STL + 0.7 AST + 0.7 BLK − 0.4 PF − TO'],
+ 'ON':['On-court net rating','Team point margin per 100 possessions while this player is on the floor.'],
+ 'OFF':['Off-court net rating','Team point margin per 100 possessions while this player is on the bench.'],
+ 'ON-OFF':['On/off difference','How much better (+) or worse (−) the team does with this player on the floor. Noisy in small samples.','ON − OFF'],
+ 'SHOT+ /SHOT':['Shot-making per shot','Points scored per shot above what the team usually gets from those same spots. + = makes tough/average shots at a high rate.','(actual − expected) ÷ FGA'],
+ 'SHOT+ TOTAL':['Shot-making total','Total points scored above expectation on located shots, based on team average points per shot from each zone.'],
+ 'DEFL':['Deflections','Getting a hand on a pass or dribble. Hard hat +1 by default.'],
+ 'LOOSE':['Loose balls','Securing a loose ball. Hard hat +1 by default.'],
+ 'DIVE':['Floor dives','Diving on the floor for the ball. Hard hat +2 by default.'],
+ 'CHG':['Charges taken','Drawing an offensive foul. Hard hat +4 by default (worth the most).'],
+ 'HARD HAT':['Hard hat points','Nate Oats’ blue-collar points for effort plays.',null],
+ 'HH':['Hard hat points','Nate Oats’ blue-collar points for effort plays.',null],
+ 'HATS':['Hard hats won','Games where this player led the team in hard hat points.'],
+ 'SHARE':['Share','This player’s share of the team total.'],
+ 'TOTAL':['Total','Season total.'],
+ 'PER GM':['Per game','Season average per game played.'],
+ 'POSS':['Possessions','Estimated possessions this group played (average of offense and defense).','FGA − OREB + TO + 0.44 × FTA'],
+ 'ORTG':['Offensive rating','Points scored per 100 possessions.','PTS ÷ POSS × 100'],
+ 'DRTG':['Defensive rating','Points allowed per 100 possessions. Lower is better.','OPP PTS ÷ OPP POSS × 100'],
+ 'NET':['Net rating','Offensive rating minus defensive rating: point margin per 100 possessions.','ORTG − DRTG'],
+ 'NET/100':['Net rating','Point margin per 100 possessions for this lineup. “sm” = sample too small.','ORTG − DRTG'],
+ 'OPP':['Opponent points','Points allowed while this group was on the floor.'],
+ 'TOV%':['Turnover rate','Share of possessions that end in a turnover. Lower is better. One of the four factors.','TO ÷ POSS'],
+ 'OREB%':['Offensive rebound %','Share of your missed shots you rebounded. One of the four factors.','OREB ÷ (OREB + OPP DREB)'],
+ 'FACTOR':['Four factors','Dean Oliver’s four things that decide most games, in order of importance: shooting (eFG%), turnovers (TOV%), offensive rebounding (OREB%), free throws (FT RATE).'],
+ 'OFF RATING':['Offensive rating','Points scored per 100 possessions. Adjusts for pace, so fast and slow games compare fairly.','PTS ÷ POSS × 100'],
+ 'DEF RATING':['Defensive rating','Points allowed per 100 possessions. Lower is better. Needs opponent misses, rebounds and turnovers tracked.','OPP PTS ÷ OPP POSS × 100'],
+ 'NET RATING':['Net rating','Point margin per 100 possessions. Pace is the average possessions per team per game.','ORTG − DRTG'],
+ 'TS% / EFG%':['Shooting efficiency','True shooting % (includes free throws) / effective FG % (extra credit for 3s).'],
+ 'HARD HAT / GM':['Hard hat per game','Team hard hat points per game, and per 100 possessions.',null],
+ 'PTS / GAME':['Points per game','Average points scored, and allowed below.'],
+ 'RECORD':['Record','Wins–losses in games marked final.'],
+};
+function normKey(t){return String(t||'').trim().replace(/[−–]/g,'-').toUpperCase()}
+function applyGlossary(root){(root||document).querySelectorAll('th,.kpi .k,.ff .lab,.ff .h').forEach(el=>{const k=normKey(el.textContent);if(GLOSS[k]){el.dataset.def=k;el.classList.add('def');el.removeAttribute('title')}})}
+let defEl=null,defTimer=null,defHide=null;
+function showDef(el){const g=GLOSS[el.dataset.def];if(!g)return;if(!defEl){defEl=document.createElement('div');defEl.className='deftip';document.body.appendChild(defEl)}
+  const formula=g[2]===null?HHF():g[2];defEl.innerHTML=`<b>${esc(g[0])}</b>${esc(g[1])}${formula?`<i>${esc(formula)}</i>`:''}`;
+  const r=el.getBoundingClientRect();defEl.style.left='0px';defEl.style.top='0px';defEl.classList.add('show');
+  const w=defEl.offsetWidth,h=defEl.offsetHeight;let x=Math.min(Math.max(8,r.left+r.width/2-w/2),innerWidth-w-8);let y=r.bottom+8;if(y+h>innerHeight-8)y=r.top-h-8;
+  defEl.style.left=x+'px';defEl.style.top=y+'px'}
+function hideDef(){if(defEl)defEl.classList.remove('show')}
+document.addEventListener('pointerover',e=>{if(e.pointerType!=='mouse')return;const el=e.target.closest('[data-def]');clearTimeout(defTimer);if(!el){hideDef();return}defTimer=setTimeout(()=>showDef(el),450)});
+document.addEventListener('pointerdown',e=>{const el=e.target.closest('[data-def]');if(!el||e.pointerType==='mouse'){if(e.pointerType!=='mouse')hideDef();return}clearTimeout(defHide);showDef(el);defHide=setTimeout(hideDef,4000)});
+window.addEventListener('scroll',hideDef,true);
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+let tab='games';
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===tab));hideTip();
+  ({games:renderGames,live:renderLive,box:renderBox,season:renderSeason,board:renderBoard,roster:renderRoster})[tab]();applyGlossary(view);hideDef();
+}
+
+/* ============================================================
+   GAMES
+   ============================================================ */
+function sortedGames(){return Object.values(S.games).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.createdAt||0)-(a.createdAt||0))}
+function renderGames(){
+  const gs=sortedGames();let w=0,l=0;gs.filter(g=>g.status==='final').forEach(g=>{const r=gameResult(g).r;if(r==='W')w++;else if(r==='L')l++});
+  view.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:6px"><h1>Games <small>RECORD ${w}–${l} · ${gs.length} TRACKED</small></h1><button class="b pri" data-act="newgame">+ New game</button></div>
+  ${hasDemo()?`<div class="pn" style="border-left:4px solid var(--gold)"><div class="pb row" style="justify-content:space-between"><span><b>Demo data loaded</b> <span class="mute">· sample roster, 4 simulated games and a play for testing. Real games you add are kept separately.</span></span><button class="b sm dng" data-act="removedemo">Remove demo data</button></div></div>`:''}
+  ${(Object.keys(S.games).length&&(!S.main.lastBackup||Date.now()-S.main.lastBackup>7*864e5))?`<div class="pn" style="border-left:4px solid var(--hot)"><div class="pb row" style="justify-content:space-between"><span><b>Back up your stats</b> <span class="mute">· ${S.main.lastBackup?'last backup '+Math.floor((Date.now()-S.main.lastBackup)/864e5)+' days ago':'no backup yet'}. Data lives only on this device.</span></span><button class="b sm pri" data-act="backup">Download backup</button></div></div>`:''}
+  ${roster().length?'':`<div class="pn"><div class="pb"><b>Step 1:</b> add players on the <a href="#" data-act="tab" data-v="roster" style="color:var(--hh)">Roster</a> tab.</div></div>`}
+  ${gs.length?`<div class="glist">${gs.map(g=>{const {b,r}=gameResult(g);const live=g.status!=='final';const a=adv(b.us,b.opp);
+    return `<div class="gc"><div class="gt"><div><div class="meta">${esc(g.date||'')} · ${g.loc==='away'?'AWAY':g.loc==='neutral'?'NEUTRAL':'HOME'}</div><div class="op">${g.loc==='away'?'@ ':'vs '}${esc(oppName(g))}</div></div>
+      <div style="text-align:right">${live?`<span class="tag live">LIVE · ${perLabel(g.period)}</span>`:`<span class="tag ${r}">${r==='T'?'TIE':r==='W'?'WIN':'LOSS'}</span>`}<div class="sc">${b.us.pts}<span class="mute">–${b.opp.pts}</span></div></div></div>
+      <div class="gm"><div>eFG%<b>${pc(a.efg)}</b></div><div>ORTG<b>${f1(a.ortg)}</b></div><div>TOV%<b>${pc(a.tov)}</b></div><div>HARD HAT<b style="color:var(--hh)">${f1(b.us.hh)}</b></div></div>
+      ${b.winners.length?`<div class="meta" style="padding:8px 14px;border-bottom:1px solid var(--hair)">HARD HAT → <span style="color:var(--hh)">${b.winners.map(pname).map(esc).join(', ')}</span> (${f1(b.best)})</div>`:''}
+      <div class="ga"><button class="b sm ${live?'pri':''}" data-act="opengame" data-id="${g.id}">${live?'Track live':'Tracker'}</button><button class="b sm" data-act="boxgame" data-id="${g.id}">Report</button><button class="b sm dng" data-act="delgame" data-id="${g.id}" style="margin-left:auto">Delete</button></div></div>`}).join('')}</div>`
+  :`<div class="pn"><div class="empty">No games yet. Tap <b>+ New game</b> to start tracking.</div></div>`}`;
+}
+function newGameModal(){
+  const t=new Date();const d=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  openModal(`<div class="sh">New game</div><div class="sbd" style="display:grid;gap:14px"><label class="f">Opponent<input id="ng-opp" placeholder="e.g. Northern Vance" autocomplete="off"></label>
+  <div class="row"><label class="f" style="flex:1">Date<input id="ng-date" type="date" value="${d}"></label><label class="f" style="flex:1">Site<select id="ng-loc"><option value="home">Home</option><option value="away">Away</option><option value="neutral">Neutral</option></select></label></div></div>
+  <div class="sf"><button class="b gh" data-act="close">Cancel</button><button class="b pri" data-act="creategame">Create · pick starters</button></div>`);
+  setTimeout(()=>$('#ng-opp')&&$('#ng-opp').focus(),50);
+}
+
+/* ============================================================
+   LIVE TRACKER
+   ============================================================ */
+let sel=null,pendingAct=null,shot=null,chartShow='us',liveMode='dots';
+const askedStarters=new Set();
+function currentReportGame(){return tab==='box'?S.games[boxGameId]:game()}
+function renderLive(){
+  const g=game();
+  if(!g){view.innerHTML=`<div class="pn"><div class="empty"><p>No game selected.</p><div class="row" style="justify-content:center"><button class="b pri" data-act="newgame">+ New game</button><button class="b" data-act="tab" data-v="games">Open a game</button></div></div></div>`;return}
+  const b=computeBox(g);const cp=Math.min(g.period,4);
+  const usF=b.perFouls['us_'+cp]||0,opF=b.perFouls['opp_'+cp]||0;
+  const leaders=Object.entries(b.Pl).filter(([,s])=>s.hh>0).sort((a,c)=>c[1].hh-a[1].hh).slice(0,3);
+  const maxP=Math.max(4,g.period);
+  const card=id=>{const s=b.Pl[id]||blank();const p=P(id);const f=s.pf>=5?'f5':s.pf>=4?'f4':'';
+    return `<button class="pc ${f} ${sel&&sel.team==='us'&&sel.pid===id?'on':''}" data-act="sel" data-team="us" data-pid="${id}"><span class="nb">${esc(p?p.num:'?')}</span><span><div class="pn2">${esc(p?lastName(p.name):'')}</div><div class="ps">${s.pts}P · <span class="pf">${s.pf}F</span> · <span style="color:var(--hh)">${f1(s.hh)}HH</span> · ${sgnI(s.pm)}</div></span></button>`};
+  const list=chartShow==='us'?b.shots.us:chartShow==='opp'?b.shots.opp:[...b.shots.opp,...b.shots.us];
+  let inner;if(liveMode==='hex')inner=CLIP+hexLayer(list);else inner=chartShow==='both'?shotDots(b.shots.opp,'opp')+shotDots(b.shots.us,'us'):shotDots(list,chartShow);
+  const recent=g.events.filter(e=>e.type!=='sub').slice(-10).reverse();
+  view.innerHTML=`<div class="live">
+  <div class="sb">
+    <div class="sbt u"><img src="${$('#logo').src}" alt=""><div><div class="nm">PRIDE</div><div class="tf">FOULS ${perLabel(cp)} ${usF>=5?`<b>${usF} · OPP BONUS</b>`:usF}</div></div><div class="score">${b.us.pts}</div></div>
+    <div class="sbm"><div class="per">${Array.from({length:maxP},(_,i)=>i+1).map(p=>`<button class="${g.period===p?'on':''}" data-act="period" data-p="${p}">${perLabel(p)}</button>`).join('')}<button data-act="period" data-p="${maxP+1}">+OT</button></div>
+      <div class="hhl">HARD HAT ${leaders.length?leaders.map(([id,s],i)=>`${i?'· ':''}<b>${esc(pnum(id))}</b> ${f1(s.hh)}`).join(' '):'—'} · TEAM <b>${f1(b.us.hh)}</b>${b.opp.hh?` v ${f1(b.opp.hh)}`:''}</div></div>
+    <div class="sbt o"><div class="score">${b.opp.pts}</div><div style="text-align:right"><div class="nm">${esc(oppName(g).toUpperCase())}</div><div class="tf">FOULS ${opF>=5?`<b>${opF} · BONUS</b>`:opF}</div></div></div>
+  </div>
+  <div class="lvg">
+    <div class="lvc pl5">
+      ${g.on.length?g.on.map(card).join(''):`<div class="note" style="padding:14px">No players on the floor.</div>`}
+      <button class="pc oc ${sel&&sel.team==='opp'?'on':''}" data-act="sel" data-team="opp"><span class="nb">OPP</span><span><div class="pn2">${esc(oppName(g))}</div><div class="ps">${b.opp.pts}P · ${b.opp.fgm}/${b.opp.fga} FG</div></span></button>
+      <button class="subs" data-act="subs">⇄ Substitutions</button>
+    </div>
+    <div class="cw">
+      <div class="ch"><span class="hint">${sel?`<b>${esc(sel.team==='opp'?oppName(g):pname(sel.pid))}</b> → tap court for a shot, or an action`:'Select player → tap court (shot) or action'}</span>
+      <span class="seg"><button class="${chartShow==='us'?'on':''}" data-act="chartshow" data-v="us">HC</button><button class="${chartShow==='opp'?'on':''}" data-act="chartshow" data-v="opp">Opp</button><button class="${chartShow==='both'?'on':''}" data-act="chartshow" data-v="both">All</button></span>
+      <span class="seg"><button class="${liveMode==='dots'?'on':''}" data-act="livemode" data-v="dots">Dots</button><button class="${liveMode==='hex'?'on':''}" data-act="livemode" data-v="hex">Hex</button></span></div>
+      ${courtSVG(inner,{id:'livecourt'})}
+    </div>
+    <div class="acts">
+      <h4>Free throws</h4><button class="ab ok" data-act="act" data-type="ftm">FT ✓</button><button class="ab no" data-act="act" data-type="ftx">FT ✕</button>
+      <h4>Box</h4>
+      <button class="ab" data-act="act" data-type="oreb">Off reb<small>+${S.main.weights.oreb} HH</small></button>
+      <button class="ab" data-act="act" data-type="dreb">Def reb<small>+${S.main.weights.dreb} HH</small></button>
+      <button class="ab" data-act="act" data-type="ast">Assist</button>
+      <button class="ab" data-act="act" data-type="stl">Steal<small>+${S.main.weights.stl} HH</small></button>
+      <button class="ab" data-act="act" data-type="blk">Block<small>+${S.main.weights.blk} HH</small></button>
+      <button class="ab" data-act="act" data-type="to">Turnover</button>
+      <button class="ab w" data-act="act" data-type="pf">Personal foul</button>
+      <h4>Hard hat · hustle</h4>
+      <button class="ab hu" data-act="act" data-type="defl">Deflection<small>+${S.main.weights.defl}</small></button>
+      <button class="ab hu" data-act="act" data-type="loose">Loose ball<small>+${S.main.weights.loose}</small></button>
+      <button class="ab hu" data-act="act" data-type="dive">Floor dive<small>+${S.main.weights.dive}</small></button>
+      <button class="ab hu" data-act="act" data-type="charge">Charge taken<small>+${S.main.weights.charge}</small></button>
+    </div>
+  </div>
+  <div class="lvl"><button class="undo" data-act="undo" ${g.events.length?'':'disabled style="opacity:.35"'}>↶ UNDO</button>
+    <div class="log">${recent.map(e=>`<span class="chip ${e.team==='opp'?'o':''}"><span class="pq">${esc(perLabel(e.p))}</span>${esc(describe(e))}<button data-act="delev" data-id="${e.id}" aria-label="Delete">×</button></span>`).join('')}</div>
+    ${g.status==='final'?`<button class="end" data-act="resumegame" style="color:var(--hh)">Final · reopen</button>`:`<button class="end" data-act="endgame">End game</button>`}
+  </div></div>`;
+  const svg=$('#livecourt');
+  svg.addEventListener('click',ev=>{const pt=svgPoint(svg,ev);if(pt.x<0||pt.x>500||pt.y<0||pt.y>470)return;startShot(Math.round(pt.x),Math.round(pt.y))});
+  if(!g.on.length&&roster().length&&g.status!=='final'&&!askedStarters.has(g.id)){askedStarters.add(g.id);subsModal(true)}
+}
+function describe(e){const who=e.team==='opp'?oppName(S.games[e.gid]||currentReportGame()):pname(e.pid);
+  if(e.type==='fg')return `${who} ${e.made?'made':'missed'} ${e.three?'3':'2'}`;
+  if(e.type==='ft')return `${who} FT ${e.made?'made':'missed'}`;
+  return `${who} · ${LABEL[e.type]||e.type}`}
+function addEvents(evs){const g=game();if(!g)return;const grp=uid6(),t=Date.now();
+  for(const e of evs)g.events.push(Object.assign({id:uid6(),grp,t,p:g.period,on:[...g.on]},e));
+  touch('g_'+g.id);sel=null;pendingAct=null;closeModal();renderLive();toast(describe(evs[0]))}
+function doAction(type,who){const team=who.team,pid=who.pid||null;const base={team,pid};
+  if(type==='ftm')return addEvents([{...base,type:'ft',made:true}]);
+  if(type==='ftx')return addEvents([{...base,type:'ft',made:false}]);
+  const evs=[{...base,type}];
+  if(type==='stl')evs.push({team:team==='us'?'opp':'us',pid:null,type:'to',implied:true});
+  if(type==='charge'&&team==='us')evs.push({team:'opp',pid:null,type:'to',implied:true},{team:'opp',pid:null,type:'pf',implied:true});
+  addEvents(evs)}
+function pickerGrid(act,{exclude=null,includeOpp=true,includeNone=null,mark=null}={}){const g=game();
+  return `<div class="pgrid">${g.on.filter(id=>id!==exclude).map(id=>{const p=P(id);return `<button class="${mark===id?'on':''}" data-act="${act}" data-team="us" data-pid="${id}"><b>${esc(p?p.num:'?')}</b>${esc(p?lastName(p.name):'')}</button>`}).join('')}
+  ${includeOpp?`<button class="ob" data-act="${act}" data-team="opp"><b>OPP</b>${esc(oppName(g))}</button>`:''}
+  ${includeNone?`<button class="nb" data-act="${act}" data-team="none">${includeNone}</button>`:''}</div>`}
+function startShot(x,y){const g=game();if(!g)return;
+  if(!g.on.length&&!sel){toast('Set your five on the floor first');subsModal();return}
+  shot={x,y,three:isThree(x,y),who:sel?{...sel}:null,stage:sel?'result':'who',blk:null};renderShot()}
+function renderShot(){const g=game();const s=shot;const whoTxt=s.who?(s.who.team==='opp'?oppName(g):pname(s.who.pid)):'';
+  let h=`<div class="sh">Shot <span class="tg">${esc(ZMAP[zoneKey(s.x,s.y)].n)} · ${(Math.hypot(s.x-BX,Math.max(0,s.y-BY))/10).toFixed(0)} ft</span>${whoTxt?`<span class="who">${esc(whoTxt)}</span>`:''}</div><div class="sbd">`;
+  if(s.stage==='who')h+=`<div class="sec">Shooter</div>`+pickerGrid('shot-who');
+  else if(s.stage==='result')h+=`<div class="row" style="margin-bottom:14px"><span class="seg"><button class="${!s.three?'on':''}" data-act="shot-3" data-v="0">2PT</button><button class="${s.three?'on':''}" data-act="shot-3" data-v="1">3PT</button></span><span class="note">auto-detected from location</span></div>
+    <div class="big2"><button data-act="shot-made">MADE</button><button data-act="shot-miss">MISSED</button></div>`;
+  else if(s.stage==='ast')h+=`<div class="sec">Assisted by</div>`+pickerGrid('shot-ast',{exclude:s.who.pid,includeOpp:false,includeNone:'Unassisted'});
+  else if(s.stage==='miss'){
+    h+=(s.who.team==='opp'?`<div class="sec">Blocked by · optional</div>${pickerGrid('shot-blk',{includeOpp:false,mark:s.blk})}`:`<div class="row"><button class="b sm ${s.blk==='opp'?'pri':''}" data-act="shot-oppblk">${s.blk==='opp'?'✓ ':''}Blocked by opponent</button></div>`)
+      +`<div class="sec">Rebound</div>`+pickerGrid('shot-reb',{includeNone:'None / dead ball'})}
+  h+=`</div><div class="sf"><button class="b gh sm" data-act="shot-cancel">Cancel</button></div>`;openModal(h)}
+function finishShot(made,extra){const s=shot;const ev=[{team:s.who.team,pid:s.who.pid||null,type:'fg',made,three:s.three,x:s.x,y:s.y}];if(extra)ev.push(...extra);shot=null;addEvents(ev)}
+function subsModal(starters){const g=game();const act=roster().filter(p=>p.active!==false);
+  if(!act.length){openModal(`<div class="sh">No players yet</div><div class="sbd">Add your roster first.</div><div class="sf"><button class="b pri" data-act="gotoroster">Go to roster</button></div>`);return}
+  window._subDraft=[...g.on];drawSubs(starters)}
+function drawSubs(starters){const d=window._subDraft;const act=roster().filter(p=>p.active!==false).sort((a,b)=>(+a.num||0)-(+b.num||0));const box=computeBox(game());
+  openModal(`<div class="sh">${starters?'Starting five':'Substitutions'}<span class="tg" style="color:${d.length===5?'var(--pos)':'var(--hot)'}">${d.length}/5 ON FLOOR</span></div><div class="sbd">
+  <div class="pgrid">${act.map(p=>{const s=box.Pl[p.id];return `<button class="${d.includes(p.id)?'on':''}" data-act="subtoggle" data-pid="${p.id}"><b>${esc(p.num)}</b>${esc(lastName(p.name))}<span class="x">${s?`${s.pts}P · ${s.pf}F · ${sgnI(s.pm)}`:'—'}</span></button>`}).join('')}</div></div>
+  <div class="sf"><button class="b gh" data-act="close">Cancel</button><button class="b pri" data-act="subdone">Confirm</button></div>`)}
+
+/* ============================================================
+   GAME REPORT
+   ============================================================ */
+let boxGameId=null,boxFilter='all',boxTeam='us',boxMode='hex',boxTable='trad';
+const tradHead=`<tr><th class="j">#</th><th class="n">Player</th><th>PTS</th><th>FG</th><th>3PT</th><th>FT</th><th>OREB</th><th>DREB</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>PF</th><th>+/−</th></tr>`;
+const tradCols=s=>`<td><b>${s.pts}</b></td><td>${s.fgm}-${s.fga}</td><td>${s.tpm}-${s.tpa}</td><td>${s.ftm}-${s.fta}</td><td>${s.oreb}</td><td>${s.dreb}</td><td>${s.oreb+s.dreb}</td><td>${s.ast}</td><td>${s.stl}</td><td>${s.blk}</td><td>${s.to}</td><td>${s.pf}</td><td class="${cls(s.pm)}">${sgnI(s.pm)}</td>`;
+const advHead=`<tr><th class="j">#</th><th class="n">Player</th><th title="True shooting %">TS%</th><th title="Effective FG %">eFG%</th><th title="Points per field goal attempt">PPS</th><th title="Share of team shots, FTs and turnovers used">USE%</th><th>3PA RATE</th><th>FT RATE</th><th>AST/TO</th><th title="Hollinger Game Score">GMSC</th><th title="Team net rating with player on court">ON</th><th title="Team net rating with player off court">OFF</th><th>ON−OFF</th></tr>`;
+function advCols(s,team,oo){const use=(team.fga+0.44*team.fta+team.to)?(s.fga+0.44*s.fta+s.to)/(team.fga+0.44*team.fta+team.to):null;const ts=(s.fga+0.44*s.fta)?s.pts/(2*(s.fga+0.44*s.fta)):null;
+  const d=(oo&&oo.on!=null&&oo.off!=null)?oo.on-oo.off:null;
+  return `<td>${pc(ts)}</td><td>${s.fga?pc((s.fgm+0.5*s.tpm)/s.fga):'–'}</td><td>${s.fga?f2((s.pts-s.ftm)/s.fga):'–'}</td><td>${pc(use)}</td><td>${s.fga?pc(s.tpa/s.fga):'–'}</td><td>${s.fga?pc(s.ftm/s.fga):'–'}</td><td>${s.to?f2(s.ast/s.to):(s.ast?'∞':'–')}</td><td><b>${f1(gameScore(s))}</b></td><td class="${cls(oo&&oo.on)}">${oo?sgn(oo.on):'–'}</td><td class="${cls(oo&&oo.off)}">${oo?sgn(oo.off):'–'}</td><td class="${cls(d)}">${sgn(d)}</td>`}
+const hhHead=`<tr><th class="j">#</th><th class="n">Player</th>${HH_TYPES.map(t=>`<th>${({dreb:'DREB',oreb:'OREB',stl:'STL',blk:'BLK',defl:'DEFL',loose:'LOOSE',dive:'DIVE',charge:'CHG'})[t]}</th>`).join('')}<th class="hh">HARD HAT</th><th class="hh">SHARE</th></tr>`;
+const hhCols=(s,tot)=>HH_TYPES.map(t=>`<td>${s[t]}</td>`).join('')+`<td class="hh"><b>${f1(s.hh)}</b></td><td class="hh">${tot?Math.round(s.hh/tot*100)+'%':'–'}<span class="bar"><i style="width:${tot?s.hh/tot*100:0}%;background:var(--gold)"></i></span></td>`;
+function fourFactors(a,o,labA,labO){
+  const rows=[['eFG%',a.efg,o.efg,true,.8],['TOV%',a.tov,o.tov,false,.4],['OREB%',a.orb,o.orb,true,.6],['FT RATE',a.ftr,o.ftr,true,.6],['3PA RATE',a.tpar,o.tpar,null,.8]];
+  return `<div class="ff"><div class="h">Factor</div><div class="h">${esc(labA)}</div><div class="h">${esc(labO)}</div>${rows.map(([n,x,y,hi,sc])=>{const bx=x!=null&&y!=null&&hi!=null?(hi?x>y:x<y):null;
+    const cell=(v,c,win)=>`<div><span class="val ${win?'best':''}" style="${win===false?'color:var(--mute)':''}">${pc(v)}</span><span class="m"><i style="width:${v!=null?Math.min(100,v/sc*100):0}%;background:${c}"></i></span></div>`;
+    return `<div class="lab">${n}</div>${cell(x,'var(--us)',bx===null?null:bx)}${cell(y,'var(--opp)',bx===null?null:!bx)}`}).join('')}</div>`}
+const perList=g=>{const m=Math.max(4,g.period||1,...g.events.map(e=>e.p||1));return Array.from({length:m},(_,i)=>i+1)};
+function filterGame(g,per){if(per==='all')return g;const ev=g.events.filter(e=>e.p===+per);const played=new Set();ev.forEach(e=>(e.on||[]).forEach(id=>played.add(id)));return {...g,events:ev,played:[...played]}}
+function lineScore(g){
+  const pers=perList(g);const qb=pers.map(p=>computeBox(filterGame(g,p)));const T=computeBox(g);const won=T.us.pts>T.opp.pts,lost=T.us.pts<T.opp.pts;
+  const row=(name,img,k,w)=>`<tr><td class="n"><span style="display:inline-flex;align-items:center;gap:10px">${img}${esc(name)}</span></td>${qb.map(b=>`<td>${b[k].pts}</td>`).join('')}<td style="font-weight:800;${w?'':'color:var(--mute)'}">${T[k].pts}</td></tr>`;
+  return `<div class="pn ls"><table class="st"><tr><th class="n"></th>${pers.map(p=>`<th>${p<=4?p:perLabel(p)}</th>`).join('')}<th>T</th></tr>
+  ${row('Pride',`<img src="${$('#logo').src}" style="height:22px" alt="">`,'us',!lost)}${row(oppName(g),'<span style="display:inline-block;width:22px"></span>','opp',!won)}</table></div>`}
+function renderBox(){
+  const gs=sortedGames();
+  if(!gs.length){view.innerHTML=`<div class="pn"><div class="empty">No games yet.</div></div>`;return}
+  if(!boxGameId||!S.games[boxGameId])boxGameId=(game()||gs[0]).id;
+  const g=S.games[boxGameId];const b=computeBox(g);const A=adv(b.us,b.opp),O=adv(b.opp,b.us);
+  const ids=Object.keys(b.Pl).sort((a,c)=>b.Pl[c].pts-b.Pl[a].pts||(+(P(a)||{}).num||0)-(+(P(c)||{}).num||0));
+  const shots=boxTeam==='opp'?b.shots.opp:b.shots.us.filter(e=>boxFilter==='all'||e.pid===boxFilter);
+  const lus=Object.values(b.lineups).map(L=>({...L,...lineupRtg(L),pm:L.pf-L.pa})).filter(L=>L.poss>=1).sort((a,c)=>c.pm-a.pm||(c.net??-999)-(a.net??-999)).slice(0,8);
+  const pace=(A.poss+O.poss)/2;const oppTracked=b.opp.fga>0&&(b.opp.dreb+b.opp.oreb)>0;
+  let table;
+  if(boxTable==='trad')table=`${tradHead}${ids.map(id=>`<tr><td class="j">${esc(P(id)?P(id).num:'')}</td><td class="n">${esc(P(id)?P(id).name:'(removed)')}</td>${tradCols(b.Pl[id])}</tr>`).join('')}<tr class="tot"><td></td><td class="n">Pride</td>${tradCols({...b.us,pm:b.us.pts-b.opp.pts})}</tr><tr class="tot o"><td></td><td class="n">${esc(oppName(g))}</td>${tradCols({...b.opp,pm:b.opp.pts-b.us.pts})}</tr>`;
+  else if(boxTable==='adv')table=`${advHead}${ids.map(id=>`<tr><td class="j">${esc(P(id)?P(id).num:'')}</td><td class="n">${esc(P(id)?P(id).name:'(removed)')}</td>${advCols(b.Pl[id],b.us,onOff(b.lineups,id))}</tr>`).join('')}<tr class="tot"><td></td><td class="n">Pride</td>${advCols(b.us,b.us,null)}</tr>`;
+  else table=`${hhHead}${ids.slice().sort((a,c)=>b.Pl[c].hh-b.Pl[a].hh).map(id=>`<tr><td class="j">${esc(P(id)?P(id).num:'')}</td><td class="n">${esc(P(id)?P(id).name:'(removed)')}</td>${hhCols(b.Pl[id],b.us.hh)}</tr>`).join('')}<tr class="tot"><td></td><td class="n">Pride</td>${hhCols(b.us,b.us.hh)}</tr>${b.opp.hh?`<tr class="tot o"><td></td><td class="n">${esc(oppName(g))}</td>${hhCols(b.opp,0)}</tr>`:''}`;
+  view.innerHTML=`<div class="row" style="justify-content:space-between;margin-bottom:12px">
+    <div class="row"><select class="sel" data-change="boxgame" style="min-height:42px;font-size:13px">${gs.map(x=>`<option value="${x.id}" ${x.id===g.id?'selected':''}>${esc(x.date)} · ${x.loc==='away'?'@':'vs'} ${esc(oppName(x))}</option>`).join('')}</select></div>
+    <div class="row"><button class="b sm" data-act="csv">Export CSV</button><button class="b sm pri" data-act="opengame" data-id="${g.id}">Tracker</button></div></div>
+  <div class="kpis"><div class="kpi hl"><div class="k">Pride</div><div class="v">${b.us.pts}</div><div class="s">${g.status==='final'?'FINAL':'LIVE · '+perLabel(g.period)}</div></div><div class="kpi"><div class="k">${esc(oppName(g))}</div><div class="v">${b.opp.pts}</div><div class="s">MARGIN ${sgnI(b.us.pts-b.opp.pts)}</div></div>
+    <div class="kpi"><div class="k">Off rating</div><div class="v">${f1(A.ortg)}</div><div class="s">PTS / 100 POSS</div></div>
+    <div class="kpi"><div class="k">Def rating</div><div class="v">${oppTracked?f1(A.drtg):'–'}</div><div class="s">${oppTracked?'OPP PTS / 100':'TRACK OPP MISSES'}</div></div>
+    <div class="kpi"><div class="k">Net rating</div><div class="v ${oppTracked?cls(A.ortg-A.drtg):''}">${oppTracked?sgn(A.ortg-A.drtg):'–'}</div><div class="s">PACE ${f1(pace)}</div></div>
+    <div class="kpi"><div class="k">TS%</div><div class="v">${pc(A.ts)}</div><div class="s">PPS ${f2(A.pps)}</div></div>
+    <div class="kpi hl"><div class="k">Hard hat</div><div class="v">${f1(b.us.hh)}</div><div class="s">${f1(A.hh100)} / 100 POSS${b.opp.hh?` · OPP ${f1(b.opp.hh)}`:''}</div></div></div>
+  ${lineScore(g)}
+  ${b.winners.length?`<div class="hhb">${HHICON}<div><div class="k">HARD HAT AWARD</div><div class="nm">${b.winners.map(id=>esc(P(id)?P(id).name:pname(id))).join(' & ')}</div></div><div class="v">${f1(b.best)}</div></div>`:''}
+  <div class="pn"><div class="ph"><span class="t"><b>01</b>Box score</span><div class="r"><span class="seg"><button class="${boxTable==='trad'?'on':''}" data-act="boxtable" data-v="trad">Traditional</button><button class="${boxTable==='adv'?'on':''}" data-act="boxtable" data-v="adv">Advanced</button><button class="${boxTable==='hh'?'on':''}" data-act="boxtable" data-v="hh">Hard hat</button></span></div></div>
+    <div class="tw">${'<table class="st">'+table+'</table>'}</div>
+    <div class="note" style="padding:10px 14px">${boxTable==='adv'?'TS% = PTS ÷ 2(FGA + 0.44·FTA) · USE% = share of team possessions used · ON/OFF = team net rating per 100 possessions with player on/off court (min 3 poss) · possessions ≈ FGA − OREB + TO + 0.44·FTA':boxTable==='hh'?'Hard hat = '+HH_TYPES.map(t=>`${LABEL[t]} ${S.main.weights[t]}`).join(' · '):'+/− = scoring margin while on the floor.'}</div></div>
+  <div class="g32"><div class="pn"><div class="ph"><span class="t"><b>02</b>Shot chart</span><div class="r"><span class="seg"><button class="${boxTeam==='us'?'on':''}" data-act="boxteam" data-v="us">Pride</button><button class="${boxTeam==='opp'?'on':''}" data-act="boxteam" data-v="opp">Opp</button></span>
+    ${boxTeam==='us'?`<select class="sel" data-change="boxfilter"><option value="all">All players</option>${ids.filter(id=>b.Pl[id].fga).map(id=>`<option value="${id}" ${boxFilter===id?'selected':''}>${esc(pname(id))}</option>`).join('')}</select>`:''}${modeSeg(boxMode,'boxmode')}</div></div>
+    <div style="padding:10px 14px 0">${chartLegend(boxMode,boxTeam)}</div><div class="chartbox" id="boxchart">${shotChart(shots,boxTeam,boxMode)}</div><div class="note" style="padding:0 14px 12px">${shots.length} located FGA${boxMode==='hex'?' · hex color shrunk toward average for small samples':''}</div></div>
+    <div><div class="pn"><div class="ph"><span class="t"><b>03</b>Four factors</span></div><div class="pb" style="padding:0">${fourFactors(A,O,'Pride',oppName(g))}</div>${oppTracked?'':'<div class="note" style="padding:10px 14px">Opponent factors need their misses, rebounds and turnovers tracked.</div>'}</div>
+    <div class="pn"><div class="ph"><span class="t"><b>04</b>Shot profile</span></div>${zoneTable(shots)}</div></div></div>
+  <div class="g2"><div class="pn"><div class="ph"><span class="t"><b>05</b>Lineups</span><span class="note" style="margin-left:auto">sorted by +/−</span></div>${lus.length?`<div class="tw"><table class="st"><tr><th class="n">Five</th><th>POSS</th><th>PTS</th><th>OPP</th><th>+/−</th><th>NET/100</th></tr>${lus.map(L=>`<tr><td class="n" style="font-family:var(--mono);font-weight:500">${L.ids.map(id=>esc(pnum(id))).join(' ')}</td><td>${f1(L.poss)}</td><td>${L.pf}</td><td>${L.pa}</td><td class="${cls(L.pm)}">${sgnI(L.pm)}</td><td class="${cls(L.net)}">${L.poss>=4?sgn(L.net):'<span class="mute">sm</span>'}</td></tr>`).join('')}</table></div>`:'<div class="empty">No lineup data yet.</div>'}</div>
+  <div class="pn"><div class="ph"><span class="t"><b>06</b>Play-by-play</span></div><div class="tw scroll" style="max-height:380px;overflow-y:auto"><table class="st"><tr><th class="j">PER</th><th class="n">Play</th><th></th></tr>${g.events.slice().reverse().map(e=>`<tr><td class="j">${perLabel(e.p)}</td><td class="n" style="font-weight:500;white-space:normal">${e.type==='sub'?`<span class="mute">SUB →</span> ${e.next.map(id=>esc(pnum(id))).join(' ')}`:esc(describe(e))+(e.implied?' <span class="mute">auto</span>':'')}</td><td><button class="b sm dng" data-act="delev" data-id="${e.id}">✕</button></td></tr>`).join('')}</table></div></div></div>`;
+  bindTips($('#boxchart'));applyGlossary(view);
+}
+function gameCSV(g){const b=computeBox(g);const H=['#','Player','PTS','FGM','FGA','3PM','3PA','FTM','FTA','OREB','DREB','REB','AST','STL','BLK','TO','PF','+/-','TS%','eFG%','GMSC','DEFL','LOOSE','DIVE','CHG','HARD HAT'];
+  const q=v=>`"${String(v).replace(/"/g,'""')}"`;
+  const row=(n,name,s)=>[n,name,s.pts,s.fgm,s.fga,s.tpm,s.tpa,s.ftm,s.fta,s.oreb,s.dreb,s.oreb+s.dreb,s.ast,s.stl,s.blk,s.to,s.pf,s.pm,(s.fga+0.44*s.fta)?(s.pts/(2*(s.fga+0.44*s.fta))*100).toFixed(1):'',s.fga?((s.fgm+0.5*s.tpm)/s.fga*100).toFixed(1):'',gameScore(s).toFixed(1),s.defl,s.loose,s.dive,s.charge,s.hh].map(q).join(',');
+  const pers=perList(g);const ls=pers.map(p=>computeBox(filterGame(g,p)));
+  const lines=[q(`Pride vs ${oppName(g)} ${g.date} Final ${b.us.pts}-${b.opp.pts}`),['Team',...pers.map(perLabel),'T'].join(','),['Pride',...ls.map(x=>x.us.pts),b.us.pts].join(','),[q(oppName(g)),...ls.map(x=>x.opp.pts),b.opp.pts].join(','),'',H.join(',')];
+  Object.keys(b.Pl).forEach(id=>lines.push(row(P(id)?P(id).num:'',P(id)?P(id).name:'',b.Pl[id])));
+  lines.push(row('','Pride totals',{...b.us,pm:b.us.pts-b.opp.pts}));lines.push(row('',oppName(g),{...b.opp,pm:b.opp.pts-b.us.pts}));
+  return lines.join('\n')}
+async function deliverText(filename,text,label){
+  if(!downloads){
+    const type=filename.endsWith('.csv')?'text/csv':'application/json';
+    try{const file=new File([text],filename,{type});
+      if(navigator.canShare&&navigator.share&&/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)&&'ontouchend' in document&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});return true}}catch(e){if(e&&e.name==='AbortError')return false}
+    try{const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);toast(label+' downloaded');return true}catch(e){}
+  }
+  if(downloads){try{await downloads.save({filename,data:text});toast(label+' saved');return true}catch(e){if(e&&/declin|cancel|reject/i.test(String(e.code)+String(e.message)))return}}
+  try{await navigator.clipboard.writeText(text);toast(label+' copied');return true}catch(e){openModal(`<div class="sh">${esc(label)}</div><div class="sbd"><p class="note">Select all and copy:</p><textarea style="width:100%;height:240px;font-family:var(--mono);font-size:11px;background:var(--bg);border:1px solid var(--hair2);color:var(--ink)">${esc(text)}</textarea></div><div class="sf"><button class="b" data-act="close">Done</button></div>`)}}
+
+/* ============================================================
+   SEASON
+   ============================================================ */
+let seasonMode='avg',seasonShotP='all',seasonChart='hex',seasonTable='trad';
+function renderSeason(){
+  const gs=sortedGames().filter(g=>g.events.length);
+  if(!gs.length){view.innerHTML=`<div class="pn"><div class="empty">Season analytics appear after your first tracked game.</div></div>`;return}
+  const tot={},gp={},hats={},lin={};let w=0,l=0;const T=blank(),OT=blank();const shots=[];const perGame=[];
+  gs.slice().reverse().forEach(g=>{const b=computeBox(g);if(g.status==='final'){if(b.us.pts>b.opp.pts)w++;else if(b.us.pts<b.opp.pts)l++}
+    for(const k in T){T[k]+=b.us[k];OT[k]+=b.opp[k]}
+    const a=adv(b.us,b.opp);perGame.push({g,us:b.us.pts,opp:b.opp.pts,hh:b.us.hh,ortg:a.ortg});
+    for(const id in b.Pl){tot[id]=tot[id]||blank();gp[id]=(gp[id]||0)+1;for(const k in tot[id])tot[id][k]+=b.Pl[id][k]}
+    for(const [k,L] of Object.entries(b.lineups)){const M=lin[k]=lin[k]||{ids:L.ids,us:tb(),op:tb(),pf:0,pa:0};for(const s of ['us','op'])for(const kk in M[s])M[s][kk]+=L[s][kk];M.pf+=L.pf;M.pa+=L.pa}
+    b.winners.forEach(id=>hats[id]=(hats[id]||0)+1);shots.push(...b.shots.us)});
+  const n=gs.length;const A=adv(T,OT),O=adv(OT,T);const oppTracked=OT.fga>0&&(OT.dreb+OT.oreb)>0;
+  // expected points by zone from team baseline → shot-making above expectation
+  const base=zoneStats(shots).z;const xpps=k=>base[k].a?base[k].pts/base[k].a:0;
+  const ids=Object.keys(tot).sort((a,c)=>tot[c].pts/gp[c]-tot[a].pts/gp[a]);
+  const pae={};ids.forEach(id=>{let act=0,exp=0,c=0;shots.filter(e=>e.pid===id).forEach(e=>{act+=e.made?(e.three?3:2):0;exp+=xpps(zoneKey(e.x,e.y));c++});pae[id]={c,act,exp,d:c?(act-exp):null,per:c?(act-exp)/c:null}});
+  const av=(id,k)=>seasonMode==='avg'?f1(tot[id][k]/gp[id]):f1(tot[id][k]).replace(/\.0$/,'');
+  const hhRank=Object.keys(tot).sort((a,c)=>(hats[c]||0)-(hats[a]||0)||tot[c].hh-tot[a].hh).slice(0,8);
+  const sh=shots.filter(e=>seasonShotP==='all'||e.pid===seasonShotP);
+  let table;
+  if(seasonTable==='trad')table=`<tr><th class="j">#</th><th class="n">Player</th><th>GP</th><th>PTS</th><th>REB</th><th>OREB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>PF</th><th>FG%</th><th>3PM-A</th><th>3P%</th><th>FT%</th><th>+/−</th></tr>
+    ${ids.map(id=>{const s=tot[id];return `<tr><td class="j">${esc(P(id)?P(id).num:'')}</td><td class="n">${esc(P(id)?P(id).name:'(removed)')}</td><td>${gp[id]}</td><td><b>${av(id,'pts')}</b></td><td>${seasonMode==='avg'?f1((s.oreb+s.dreb)/gp[id]):s.oreb+s.dreb}</td><td>${av(id,'oreb')}</td><td>${av(id,'ast')}</td><td>${av(id,'stl')}</td><td>${av(id,'blk')}</td><td>${av(id,'to')}</td><td>${av(id,'pf')}</td><td>${pct(s.fgm,s.fga)}</td><td>${s.tpm}-${s.tpa}</td><td>${pct(s.tpm,s.tpa)}</td><td>${pct(s.ftm,s.fta)}</td><td class="${cls(s.pm)}">${seasonMode==='avg'?sgn(s.pm/gp[id]):sgnI(s.pm)}</td></tr>`}).join('')}`;
+  else if(seasonTable==='adv')table=`<tr><th class="j">#</th><th class="n">Player</th><th>GP</th><th>TS%</th><th>eFG%</th><th>PPS</th><th>USE%</th><th>3PA RATE</th><th>AST/TO</th><th>GMSC</th><th title="Points above expected on located shots, vs team average by zone">SHOT+ /SHOT</th><th>SHOT+ TOTAL</th><th>ON</th><th>OFF</th><th>ON−OFF</th></tr>
+    ${ids.map(id=>{const s=tot[id];const use=(T.fga+0.44*T.fta+T.to)?(s.fga+0.44*s.fta+s.to)/(T.fga+0.44*T.fta+T.to):null;const oo=onOff(lin,id);const d=(oo.on!=null&&oo.off!=null)?oo.on-oo.off:null;const p=pae[id];
+      return `<tr><td class="j">${esc(P(id)?P(id).num:'')}</td><td class="n">${esc(P(id)?P(id).name:'(removed)')}</td><td>${gp[id]}</td><td>${(s.fga+0.44*s.fta)?pc(s.pts/(2*(s.fga+0.44*s.fta))):'–'}</td><td>${s.fga?pc((s.fgm+0.5*s.tpm)/s.fga):'–'}</td><td>${s.fga?f2((s.pts-s.ftm)/s.fga):'–'}</td><td>${pc(use)}</td><td>${s.fga?pc(s.tpa/s.fga):'–'}</td><td>${s.to?f2(s.ast/s.to):'–'}</td><td><b>${f1(gameScore(s)/gp[id])}</b></td><td class="${cls(p.per)}">${p.c>=5?(p.per>0?'+':'')+f2(p.per):'<span class="mute">sm</span>'}</td><td class="${cls(p.d)}">${p.c>=5?sgn(p.d):'–'}</td><td class="${cls(oo.on)}">${sgn(oo.on)}</td><td class="${cls(oo.off)}">${sgn(oo.off)}</td><td class="${cls(d)}">${sgn(d)}</td></tr>`}).join('')}`;
+  else table=`<tr><th class="j">#</th><th class="n">Player</th><th>GP</th>${HH_TYPES.map(t=>`<th>${({dreb:'DREB',oreb:'OREB',stl:'STL',blk:'BLK',defl:'DEFL',loose:'LOOSE',dive:'DIVE',charge:'CHG'})[t]}</th>`).join('')}<th class="hh">HH</th><th class="hh">HATS</th></tr>
+    ${Object.keys(tot).sort((a,c)=>tot[c].hh/gp[c]-tot[a].hh/gp[a]).map(id=>`<tr><td class="j">${esc(P(id)?P(id).num:'')}</td><td class="n">${esc(P(id)?P(id).name:'(removed)')}</td><td>${gp[id]}</td>${HH_TYPES.map(t=>`<td>${av(id,t)}</td>`).join('')}<td class="hh"><b>${av(id,'hh')}</b></td><td class="hh">${hats[id]||0}</td></tr>`).join('')}`;
+  const lus=Object.values(lin).map(L=>({...L,...lineupRtg(L),pm:L.pf-L.pa})).filter(L=>L.poss>=10).sort((a,c)=>(c.net??-999)-(a.net??-999)).slice(0,8);
+  view.innerHTML=`<h1>Season <small>${n} GAMES · ${w}–${l}</small></h1>
+  <div class="kpis"><div class="kpi hl"><div class="k">Record</div><div class="v">${w}–${l}</div><div class="s">${n} TRACKED</div></div>
+   <div class="kpi"><div class="k">Pts / game</div><div class="v">${f1(T.pts/n)}</div><div class="s">ALLOWED ${f1(OT.pts/n)}</div></div>
+   <div class="kpi"><div class="k">Off rating</div><div class="v">${f1(A.ortg)}</div><div class="s">PER 100 POSS</div></div>
+   <div class="kpi"><div class="k">Def rating</div><div class="v">${oppTracked?f1(A.drtg):'–'}</div><div class="s">PER 100 POSS</div></div>
+   <div class="kpi"><div class="k">Net rating</div><div class="v ${oppTracked?cls(A.ortg-A.drtg):''}">${oppTracked?sgn(A.ortg-A.drtg):'–'}</div><div class="s">PACE ${f1((A.poss+O.poss)/2/n)}</div></div>
+   <div class="kpi"><div class="k">TS% / eFG%</div><div class="v" style="font-size:20px">${pc(A.ts)} / ${pc(A.efg)}</div><div class="s">PPS ${f2(A.pps)}</div></div>
+   <div class="kpi hl"><div class="k">Hard hat / gm</div><div class="v">${f1(T.hh/n)}</div><div class="s">${f1(A.hh100)} / 100 POSS</div></div></div>
+  <div class="g32"><div class="pn"><div class="ph"><span class="t"><b>01</b>Shot chart</span><div class="r"><select class="sel" data-change="seasonshot"><option value="all">Team</option>${ids.filter(id=>tot[id].fga).map(id=>`<option value="${id}" ${seasonShotP===id?'selected':''}>${esc(pname(id))}</option>`).join('')}</select>${modeSeg(seasonChart,'seasonchart')}</div></div>
+    <div style="padding:10px 14px 0">${chartLegend(seasonChart,'us')}</div><div class="chartbox" id="seasonchart">${shotChart(sh,'us',seasonChart)}</div><div class="note" style="padding:0 14px 12px">${sh.length} located FGA</div></div>
+    <div><div class="pn"><div class="ph"><span class="t"><b>02</b>Shot profile</span></div>${zoneTable(sh)}</div>
+    <div class="pn"><div class="ph"><span class="t"><b>03</b>Four factors</span><span class="note" style="margin-left:auto">season</span></div>${fourFactors(A,O,'Pride','Opponents')}</div></div></div>
+  <div class="pn"><div class="ph"><span class="t"><b>04</b>Players</span><div class="r"><span class="seg"><button class="${seasonTable==='trad'?'on':''}" data-act="seasontable" data-v="trad">Traditional</button><button class="${seasonTable==='adv'?'on':''}" data-act="seasontable" data-v="adv">Advanced</button><button class="${seasonTable==='hh'?'on':''}" data-act="seasontable" data-v="hh">Hard hat</button></span>${seasonTable!=='adv'?`<span class="seg"><button class="${seasonMode==='avg'?'on':''}" data-act="seasonmode" data-v="avg">Per game</button><button class="${seasonMode==='tot'?'on':''}" data-act="seasonmode" data-v="tot">Totals</button></span>`:''}</div></div>
+    <div class="tw"><table class="st">${table}</table></div>${seasonTable==='adv'?`<div class="note" style="padding:10px 14px">SHOT+ = actual points minus expected points on located shots, where expected = team's season points-per-shot from that zone. Positive = shot-maker. Min 5 FGA. ON/OFF = team net rating per 100 possessions.</div>`:''}</div>
+  <div class="g2"><div class="pn"><div class="ph"><span class="t"><b>05</b>Hard hat race</span></div><table class="st"><tr><th class="j">#</th><th class="n">Player</th><th>HATS</th><th>TOTAL</th><th>PER GM</th></tr>${hhRank.map(id=>`<tr><td class="j">${esc(P(id)?P(id).num:'')}</td><td class="n">${esc(P(id)?P(id).name:'')}</td><td class="hh"><b>${hats[id]||0}</b></td><td>${f1(tot[id].hh)}</td><td>${f1(tot[id].hh/gp[id])}<span class="bar"><i style="width:${Math.min(100,tot[id].hh/gp[id]/Math.max(...hhRank.map(x=>tot[x].hh/gp[x]),1)*100)}%;background:var(--gold)"></i></span></td></tr>`).join('')}</table></div>
+   <div class="pn"><div class="ph"><span class="t"><b>06</b>Game log</span><div class="r legend"><span><i style="background:var(--us)"></i>PRIDE</span><span><i style="background:var(--opp)"></i>OPP</span></div></div><div class="pb">${trendChart(perGame)}</div></div></div>
+  <div class="pn"><div class="ph"><span class="t"><b>07</b>Best lineups</span><span class="note" style="margin-left:auto">net rating · min 10 poss</span></div>${lus.length?`<div class="tw"><table class="st"><tr><th class="n">Five</th><th>POSS</th><th>ORTG</th><th>DRTG</th><th>NET</th><th>+/−</th></tr>${lus.map(L=>`<tr><td class="n" style="font-family:var(--mono);font-weight:500">${L.ids.map(id=>esc(pnum(id))).join(' ')}</td><td>${f1(L.poss)}</td><td>${f1(L.ortg)}</td><td>${f1(L.drtg)}</td><td class="${cls(L.net)}"><b>${sgn(L.net)}</b></td><td class="${cls(L.pm)}">${sgnI(L.pm)}</td></tr>`).join('')}</table></div>`:'<div class="empty">Not enough lineup data yet.</div>'}</div>`;
+  bindTips($('#seasonchart'));bindTips($('#trend'));applyGlossary(view);
+}
+function trendChart(rows){
+  const W=600,H=210,pl=30,pb=28,pt=8;const max=Math.max(10,...rows.map(r=>Math.max(r.us,r.opp)));const top=Math.ceil(max/20)*20;
+  const gw=(W-pl-4)/rows.length;const bw=Math.max(3,Math.min(16,(gw-10)/2));const y=v=>pt+(H-pt-pb)*(1-v/top);
+  const bar=(x,v,c,tip)=>{const yb=H-pb,yt=y(v),h=yb-yt;if(h<=0)return '';const r=Math.min(3,h,bw/2),x2=x+bw;return `<path d="M${x} ${yb}V${yt+r}Q${x} ${yt} ${x+r} ${yt}H${x2-r}Q${x2} ${yt} ${x2} ${yt+r}V${yb}Z" fill="${c}" data-tip="${esc(tip)}"/>`};
+  let g='';for(let t=0;t<=top;t+=top/4)g+=`<line x1="${pl}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="var(--hair)"/><text x="${pl-6}" y="${y(t)+3}" font-size="9" font-family="var(--mono)" fill="var(--dim)" text-anchor="end">${t}</text>`;
+  rows.forEach((r,i)=>{const x=pl+i*gw+(gw-2*bw-2)/2;const lab=`${r.g.date} vs ${oppName(r.g)}\nPride ${r.us} – ${r.opp} · ORtg ${f1(r.ortg)}`;g+=bar(x,r.us,'var(--us)',lab)+bar(x+bw+2,r.opp,'var(--opp)',lab);
+    if(rows.length<=14)g+=`<text x="${x+bw+1}" y="${H-10}" font-size="9" font-family="var(--mono)" fill="var(--mute)" text-anchor="middle">${esc(oppName(r.g).slice(0,5).toUpperCase())}</text>`});
+  return `<svg id="trend" viewBox="0 0 ${W} ${H}" width="100%">${g}<line x1="${pl}" x2="${W}" y1="${H-pb}" y2="${H-pb}" stroke="var(--hair2)"/></svg>`}
+
+/* ============================================================
+   ROSTER & SETTINGS
+   ============================================================ */
+function renderRoster(){
+  const r=roster().slice().sort((a,b)=>(+a.num||0)-(+b.num||0));
+  view.innerHTML=`<h1>Roster <small>${r.filter(p=>p.active!==false).length} ACTIVE</small></h1><div class="g2"><div class="pn"><div class="ph"><span class="t"><b>01</b>Players</span></div><div class="pb">
+  <div class="row" style="margin-bottom:14px;align-items:flex-end"><label class="f" style="width:76px">No.<input id="np-num" inputmode="numeric" maxlength="3"></label><label class="f" style="flex:1;min-width:150px">Name<input id="np-name" placeholder="First Last" autocomplete="off"></label><label class="f" style="width:88px">Pos<select id="np-pos"><option>G</option><option>G/F</option><option>F</option><option>F/C</option><option>C</option></select></label><button class="b pri" data-act="addplayer" style="min-height:46px">Add</button></div></div>
+  ${r.length?`<table class="st"><tr><th class="j">No.</th><th class="n">Name</th><th class="n">Pos</th><th>Status</th><th></th></tr>${r.map(p=>`<tr><td class="j"><input class="cellin" value="${esc(p.num)}" data-pfield="num" data-pid="${p.id}" style="width:48px;padding:7px;border:1px solid var(--hair2);background:var(--bg);color:var(--ink);font-family:var(--mono)" inputmode="numeric"></td><td class="n"><input class="cellin" value="${esc(p.name)}" data-pfield="name" data-pid="${p.id}" style="width:100%;min-width:140px;padding:7px;border:1px solid var(--hair2);background:var(--bg);color:var(--ink)"></td><td class="n mute">${esc(p.pos||'')}</td><td><button class="b sm ${p.active!==false?'':'gh'}" data-act="toggleactive" data-pid="${p.id}">${p.active!==false?'Active':'Inactive'}</button></td><td><button class="b sm dng" data-act="delplayer" data-pid="${p.id}">✕</button></td></tr>`).join('')}</table>`:'<div class="empty">No players yet.</div>'}
+  <div class="note" style="padding:10px 14px">Inactive players keep their stats but drop off the sub list.</div></div>
+  <div><div class="pn"><div class="ph"><span class="t"><b>02</b>Hard hat formula</span></div><div class="pb"><div class="row" style="align-items:flex-start;gap:14px;flex-wrap:nowrap">${HHICON}<p class="note" style="margin:0">Nate Oats' blue-collar points: 1 for each rebound, steal, block, deflection and loose ball · 1.5 for an offensive rebound · 2 for a floor dive · 4 for a charge taken. Adjust to fit your program.</p></div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px">${HH_TYPES.map(t=>`<label class="f">${LABEL[t]}<input type="number" step="0.5" min="0" inputmode="decimal" value="${S.main.weights[t]}" data-weight="${t}" style="font-family:var(--mono)"></label>`).join('')}</div>
+  <div class="row" style="margin-top:12px"><button class="b sm" data-act="resetweights">Reset to Alabama values</button></div></div></div>
+  <div class="pn"><div class="ph"><span class="t"><b>03</b>Data</span></div><div class="pb"><p class="note" style="margin-top:0">Everything saves automatically on this device, in this browser. It does not sync to other devices. Download a backup every week or so and keep it in Files, iCloud Drive or email.<br><b style="color:var(--ink)">Last backup: ${S.main.lastBackup?new Date(S.main.lastBackup).toLocaleDateString():'never'}</b></p>
+  <div class="row"><button class="b sm" data-act="backup">Download backup</button>${hasDemo()?`<button class="b sm dng" data-act="removedemo">Remove demo data</button>`:`<button class="b sm gh" data-act="loaddemo">Load demo data</button>`}<label class="b sm gh">Restore from file<input type="file" accept=".json,application/json,text/plain" data-change="restore" style="display:none"></label></div></div></div></div></div>`;
+}
+
+/* ============================================================
+   WHITEBOARD
+   ============================================================ */
+const WB={court:'half',frames:null,fi:0,tool:'move',color:'#0b0d2a',showD:true,playId:null,name:'',playing:false,drawing:null,drag:null,dirty:false};
+const TOKS=['O1','O2','O3','O4','O5','X1','X2','X3','X4','X5','B'];
+function defaultTokens(court){
+  if(court==='half')return {O1:[250,400],O2:[90,300],O3:[410,300],O4:[110,110],O5:[390,110],X1:[250,340],X2:[125,260],X3:[375,260],X4:[150,95],X5:[340,95],B:[272,392]};
+  return {O1:[470,250],O2:[560,90],O3:[560,410],O4:[700,170],O5:[700,330],X1:[520,250],X2:[620,120],X3:[620,380],X4:[760,190],X5:[760,310],B:[452,262]}}
+function wbInit(){if(!WB.frames)WB.frames=[{tokens:defaultTokens(WB.court),strokes:[]}]}
+function wbFrame(){return WB.frames[WB.fi]}
+function renderBoard(){
+  wbInit();const plays=Object.values(S.plays).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  const tools=[['move','Move',`<circle cx="17" cy="9" r="7" fill="#FFC72C" stroke="#00005e" stroke-width="1.5"/>`],['cut','Cut',`<path d="M2 9H28" stroke="currentColor" stroke-width="2"/><path d="M24 4L31 9L24 14" fill="none" stroke="currentColor" stroke-width="2"/>`],['pass','Pass',`<path d="M2 9H28" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/><path d="M24 4L31 9L24 14" fill="none" stroke="currentColor" stroke-width="2"/>`],['dribble','Dribble',`<path d="M2 9l3-5 4 10 4-10 4 10 4-10 4 10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M24 4L31 9L24 14" fill="none" stroke="currentColor" stroke-width="2"/>`],['screen','Screen',`<path d="M2 9H28M28 2V16" stroke="currentColor" stroke-width="2"/>`],['pen','Free draw',`<path d="M2 14C8 2 14 16 20 6S28 8 32 4" fill="none" stroke="currentColor" stroke-width="2"/>`],['erase','Erase line',`<path d="M8 3h18v12H8z" fill="none" stroke="#d32f2f" stroke-width="2"/><path d="M12 7l10 4M22 7l-10 4" stroke="#d32f2f" stroke-width="1.5"/>`]];
+  view.innerHTML=`<div class="wb">
+  <div class="col"><div class="colh">Court</div><div style="display:flex;border-bottom:1px solid var(--hair)"><span class="seg" style="border:0;width:100%"><button style="flex:1;min-height:42px" class="${WB.court==='half'?'on':''}" data-act="wbcourt" data-v="half">Half</button><button style="flex:1;min-height:42px" class="${WB.court==='full'?'on':''}" data-act="wbcourt" data-v="full">Full</button></span></div>
+    <div class="colh">Tools</div>${tools.map(([k,l,ic])=>`<button class="tool ${WB.tool===k?'on':''}" data-act="wbtool" data-v="${k}"><svg viewBox="0 0 34 18">${ic}</svg>${l}</button>`).join('')}
+    <div class="colh">Ink</div><div class="sw">${['#0b0d2a','#0000a8','#d32f2f','#12804a','#d98200'].map(c=>`<button class="${WB.color===c?'on':''}" data-act="wbcolor" data-v="${c}" aria-label="Color"><span style="background:${c}"></span></button>`).join('')}</div>
+    <div class="colh">Edit</div><button class="wbtn" data-act="wbundo">↶ Undo line</button><button class="wbtn" data-act="wbclear">Clear lines</button><button class="wbtn" data-act="wbdef">${WB.showD?'Hide':'Show'} defense</button><button class="wbtn" data-act="wbreset">Reset positions</button></div>
+  <div class="stage"><div class="sth"><span class="nm">${esc(WB.name||'Untitled play')}${WB.dirty&&WB.playId?'<small>UNSAVED</small>':''}</span><button data-act="wbnew">New</button><button class="pri" data-act="wbsave">${WB.playId?'Save':'Save as play'}</button></div>
+    <svg id="wbsvg" viewBox="${WB.court==='half'?'-8 -8 516 486':'-8 -8 956 516'}" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="frames">${WB.frames.map((f,i)=>`<button class="fd ${i===WB.fi?'on':''}" data-act="wbframe" data-i="${i}">${String(i+1).padStart(2,'0')}</button>`).join('')}<button class="fa" data-act="wbaddframe">+ Step</button>${WB.frames.length>1?`<button class="fa" data-act="wbdelframe">− Step</button><button class="fa pri" data-act="wbplay">${WB.playing?'■ Stop':'▶ Animate'}</button>`:''}</div></div>
+  <div class="col"><div class="colh">Playbook · ${plays.length}</div>${plays.length?plays.map(p=>`<button class="pl ${p.id===WB.playId?'on':''}" data-act="wbload" data-id="${p.id}"><div class="nm">${esc(p.name)}</div><div class="mt">${p.court==='full'?'FULL':'HALF'} · ${p.frames.length} STEP${p.frames.length>1?'S':''}</div></button>`).join(''):'<div class="note" style="padding:14px">Saved plays appear here.</div>'}
+  ${WB.playId?`<button class="wbtn" style="color:var(--neg);margin-top:auto;border-top:1px solid var(--hair)" data-act="wbdelete">Delete play</button>`:''}<div class="note" style="padding:12px 14px;border-top:1px solid var(--hair)">Draw step 1's actions → + Step → drag players to their new spots → repeat. Animate to replay.</div></div></div>`;
+  drawBoard();bindBoard();
+}
+function strokePath(s){const p=s.pts;if(!p.length)return '';const pts=s.kind==='dribble'?zigzag(p):p;
+  let d='M'+pts[0][0]+' '+pts[0][1];for(let i=1;i<pts.length;i++)d+='L'+pts[i][0]+' '+pts[i][1];
+  let end='';if(p.length>1&&s.kind!=='pen'){const a=p[p.length-1];let b=p[Math.max(0,p.length-4)];if(b[0]===a[0]&&b[1]===a[1])b=p[0];const ang=Math.atan2(a[1]-b[1],a[0]-b[0]);
+    if(s.kind==='screen'){const L=14,px=Math.cos(ang+Math.PI/2)*L,py=Math.sin(ang+Math.PI/2)*L;end=`<path d="M${a[0]+px} ${a[1]+py}L${a[0]-px} ${a[1]-py}" stroke="${s.color}" stroke-width="4.5"/>`}
+    else{const L=15;const l1=[a[0]-L*Math.cos(ang-0.42),a[1]-L*Math.sin(ang-0.42)],l2=[a[0]-L*Math.cos(ang+0.42),a[1]-L*Math.sin(ang+0.42)];end=`<path d="M${l1[0]} ${l1[1]}L${a[0]} ${a[1]}L${l2[0]} ${l2[1]}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linejoin="miter"/>`}}
+  return `<g data-stroke="1"><path d="${d}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" ${s.kind==='pass'?'stroke-dasharray="9 8"':''}/>${end}<path d="${d}" fill="none" stroke="transparent" stroke-width="18"/></g>`}
+function zigzag(p){const out=[p[0]];let acc=0,side=1;const step=11;for(let i=1;i<p.length;i++){const [x0,y0]=p[i-1],[x1,y1]=p[i];const seg=Math.hypot(x1-x0,y1-y0);if(!seg)continue;let t=step-acc;while(t<=seg){const x=x0+(x1-x0)*t/seg,y=y0+(y1-y0)*t/seg;const nx=-(y1-y0)/seg,ny=(x1-x0)/seg;out.push([x+nx*7*side,y+ny*7*side]);side*=-1;t+=step}acc=(acc+seg)%step}out.push(p[p.length-1]);return out}
+function tokenSVG(k,[x,y]){
+  if(k==='B')return `<g class="tok" data-tok="B" transform="translate(${x} ${y})"><circle r="15" fill="transparent"/><circle r="8" fill="#ff7a1a"/><path d="M-8 0H8M0-8V8" stroke="#0a0c24" stroke-width="1.2"/></g>`;
+  const o=k[0]==='O';if(!o&&!WB.showD)return '';
+  return `<g class="tok" data-tok="${k}" transform="translate(${x} ${y})"><circle r="24" fill="transparent"/>${o?`<circle r="16" fill="#FFC72C" stroke="#00005e" stroke-width="2"/>`:`<circle r="15" fill="#fff" stroke="#d32f2f" stroke-width="2.5"/>`}<text y="5.5" text-anchor="middle" font-size="15" font-family="JetBrains Mono,monospace" font-weight="700" fill="${o?'#00005e':'#d32f2f'}">${o?k[1]:'X'+k[1]}</text></g>`}
+function drawBoard(tokensOverride){const svg=$('#wbsvg');if(!svg)return;const f=wbFrame();const toks=tokensOverride||f.tokens;
+  const bg=WB.court==='half'?`<rect width="500" height="470" fill="var(--floor)"/>${courtLines()}`:`<rect width="940" height="500" fill="var(--floor)"/>${fullCourtLinesH()}<line x1="470" y1="0" x2="470" y2="500" stroke="var(--line)" stroke-width="2"/><circle cx="470" cy="250" r="60" fill="none" stroke="var(--line)" stroke-width="2"/>`;
+  svg.innerHTML=`${bg}<g id="wbstrokes">${f.strokes.map(strokePath).join('')}</g><g id="wbtoks">${TOKS.map(k=>toks[k]?tokenSVG(k,toks[k]):'').join('')}</g>`}
+function bindBoard(){const svg=$('#wbsvg');
+  svg.addEventListener('pointerdown',e=>{if(WB.playing)return;const pt=svgPoint(svg,e);const f=wbFrame();
+    if(WB.tool==='move'){const t=e.target.closest('[data-tok]');if(!t)return;WB.drag={k:t.dataset.tok,dx:f.tokens[t.dataset.tok][0]-pt.x,dy:f.tokens[t.dataset.tok][1]-pt.y};svg.setPointerCapture(e.pointerId);e.preventDefault();return}
+    if(WB.tool==='erase'){const s=e.target.closest('[data-stroke]');if(s){const idx=[...$('#wbstrokes').children].indexOf(s);if(idx>=0){f.strokes.splice(idx,1);markWB();drawBoard()}}return}
+    WB.drawing={kind:WB.tool,color:WB.color,pts:[[Math.round(pt.x),Math.round(pt.y)]]};svg.setPointerCapture(e.pointerId);e.preventDefault()});
+  svg.addEventListener('pointermove',e=>{if(!WB.drag&&!WB.drawing)return;const pt=svgPoint(svg,e);const f=wbFrame();
+    if(WB.drag){const mx=WB.court==='half'?500:940,my=WB.court==='half'?470:500;f.tokens[WB.drag.k]=[Math.round(Math.max(0,Math.min(mx,pt.x+WB.drag.dx))),Math.round(Math.max(0,Math.min(my,pt.y+WB.drag.dy)))];
+      const g=svg.querySelector(`[data-tok="${WB.drag.k}"]`);if(g)g.setAttribute('transform',`translate(${f.tokens[WB.drag.k][0]} ${f.tokens[WB.drag.k][1]})`);return}
+    const last=WB.drawing.pts[WB.drawing.pts.length-1];if(Math.hypot(pt.x-last[0],pt.y-last[1])<4)return;WB.drawing.pts.push([Math.round(pt.x),Math.round(pt.y)]);
+    let live=$('#wblive');if(!live){live=document.createElementNS('http://www.w3.org/2000/svg','g');live.id='wblive';svg.insertBefore(live,$('#wbtoks'))}live.innerHTML=strokePath(WB.drawing)});
+  const up=()=>{if(WB.drag){WB.drag=null;markWB()}if(WB.drawing){const d=WB.drawing;WB.drawing=null;if(d.pts.length>1){wbFrame().strokes.push(simplify(d));markWB()}drawBoard()}};
+  svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up)}
+function simplify(d){const out=[d.pts[0]];for(let i=1;i<d.pts.length;i++){const l=out[out.length-1];if(Math.hypot(d.pts[i][0]-l[0],d.pts[i][1]-l[1])>=7||i===d.pts.length-1)out.push(d.pts[i])}return {...d,pts:out}}
+function markWB(){WB.dirty=true;const b=$('.sth .nm');if(b&&WB.playId&&!b.innerHTML.includes('UNSAVED'))b.innerHTML+='<small>UNSAVED</small>'}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function wbAnimate(){if(WB.playing){WB.playing=false;return}WB.playing=true;renderBoard();
+  for(let i=0;i<WB.frames.length-1&&WB.playing;i++){WB.fi=i;drawBoard();document.querySelectorAll('.fd').forEach((b,j)=>b.classList.toggle('on',j===i));await sleep(700);if(!WB.playing)break;
+    const a=WB.frames[i].tokens,b=WB.frames[i+1].tokens;const t0=performance.now(),dur=1100;
+    await new Promise(res=>{const step=now=>{if(!WB.playing)return res();const t=Math.min(1,(now-t0)/dur),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;const mid={};for(const k of TOKS)if(a[k]&&b[k])mid[k]=[a[k][0]+(b[k][0]-a[k][0])*e,a[k][1]+(b[k][1]-a[k][1])*e];
+      const g=$('#wbtoks');if(g)g.innerHTML=TOKS.map(k=>mid[k]?tokenSVG(k,mid[k]):'').join('');if(t<1)requestAnimationFrame(step);else res()};requestAnimationFrame(step)})}
+  if(WB.playing){WB.fi=WB.frames.length-1;await sleep(300)}WB.playing=false;if(tab==='board')renderBoard()}
+function wbSaveModal(){openModal(`<div class="sh">Save play</div><div class="sbd"><label class="f">Play name<input id="wb-name" value="${esc(WB.name)}" placeholder="e.g. Horns – Flare" autocomplete="off"></label></div><div class="sf"><button class="b gh" data-act="close">Cancel</button><button class="b pri" data-act="wbdosave">Save</button></div>`);setTimeout(()=>$('#wb-name')&&$('#wb-name').focus(),50)}
+function wbStore(){const id=WB.playId||uid6();WB.playId=id;S.plays[id]={id,name:WB.name||'Untitled play',court:WB.court,frames:clone(WB.frames),createdAt:(S.plays[id]&&S.plays[id].createdAt)||Date.now()};WB.dirty=false;touch('p_'+id);toast('Play saved');renderBoard()}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+function openModal(html){const m=$('#modal');m.innerHTML=`<div class="sheet">${html}</div>`;m.classList.remove('hidden')}
+function closeModal(){$('#modal').classList.add('hidden');$('#modal').innerHTML=''}
+function confirmBox(msg,yes,label='Delete'){window._confirm=yes;openModal(`<div class="sh">${esc(msg)}</div><div class="sf"><button class="b gh" data-act="close">Cancel</button><button class="b dng" data-act="confirmyes">${esc(label)}</button></div>`)}
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal'){shot=null;closeModal()}});
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+const ACT={
+  tab:el=>{tab=el.dataset.v;if(tab!=='board')WB.playing=false;render();window.scrollTo(0,0)},
+  close:()=>{shot=null;pendingAct=null;closeModal()},
+  confirmyes:()=>{const f=window._confirm;closeModal();f&&f()},
+  newgame:()=>newGameModal(),
+  creategame:()=>{const opp=$('#ng-opp').value.trim()||'Opponent';const id=uid6();
+    S.games[id]={id,opp,date:$('#ng-date').value,loc:$('#ng-loc').value,status:'live',period:1,on:[],played:[],events:[],createdAt:Date.now()};
+    S.main.curGame=id;touch('g_'+id);touch('main');closeModal();tab='live';sel=null;render()},
+  opengame:el=>{S.main.curGame=el.dataset.id;touch('main');tab='live';sel=null;render()},
+  boxgame:el=>{boxGameId=el.dataset.id;boxFilter='all';tab='box';render()},
+  delgame:el=>{const g=S.games[el.dataset.id];confirmBox(`Delete the game vs ${oppName(g)}? This can't be undone.`,()=>{if(S.main.curGame===g.id)S.main.curGame=null;removeObj('g_'+g.id);render()})},
+  endgame:()=>{const g=game();confirmBox('End this game and mark it final?',()=>{g.status='final';touch('g_'+g.id);boxGameId=g.id;tab='box';render();const b=computeBox(g);if(b.winners.length)toast('Hard hat → '+b.winners.map(pname).join(' & '))},'End game')},
+  resumegame:()=>{const g=game();g.status='live';touch('g_'+g.id);renderLive()},
+  sel:el=>{const team=el.dataset.team,pid=el.dataset.pid||null;if(sel&&sel.team===team&&sel.pid===pid)sel=null;else sel={team,pid};renderLive()},
+  act:el=>{const type=el.dataset.type;if(sel)return doAction(type,sel);pendingAct=type;const nm={ftm:'Free throw made',ftx:'Free throw missed'}[type]||LABEL[type];
+    openModal(`<div class="sh">${esc(nm)}<span class="tg">WHO?</span></div><div class="sbd">${pickerGrid('pick')}</div><div class="sf"><button class="b gh sm" data-act="close">Cancel</button></div>`)},
+  pick:el=>{const t=pendingAct;pendingAct=null;doAction(t,{team:el.dataset.team,pid:el.dataset.pid||null})},
+  oppq:el=>{const n=el.dataset.n;if(n==='pf')return addEvents([{team:'opp',pid:null,type:'pf'}]);if(n==='1')return addEvents([{team:'opp',pid:null,type:'ft',made:true}]);addEvents([{team:'opp',pid:null,type:'fg',made:true,three:n==='3',x:null,y:null}])},
+  period:el=>{const g=game();g.period=+el.dataset.p;touch('g_'+g.id);renderLive()},
+  chartshow:el=>{chartShow=el.dataset.v;renderLive()},
+  livemode:el=>{liveMode=el.dataset.v;renderLive()},
+  undo:()=>{const g=game();if(!g.events.length)return;const grp=g.events[g.events.length-1].grp;const rm=g.events.filter(e=>e.grp===grp);
+    rm.filter(e=>e.type==='sub').forEach(e=>{g.on=[...e.prev]});g.events=g.events.filter(e=>e.grp!==grp);touch('g_'+g.id);toast('Undid · '+(rm[0].type==='sub'?'substitution':describe(rm[0])));renderLive()},
+  delev:el=>{const gid=tab==='box'?boxGameId:S.main.curGame;const g=S.games[gid];const e=g.events.find(x=>x.id===el.dataset.id);if(!e)return;
+    if(e.type==='sub'&&g.events[g.events.length-1]!==e){toast('Only the latest substitution can be removed');return}
+    if(e.type==='sub')g.on=[...e.prev];g.events=g.events.filter(x=>x!==e);touch('g_'+g.id);render()},
+  subs:()=>subsModal(false),
+  gotoroster:()=>{closeModal();tab='roster';render()},
+  subtoggle:el=>{const d=window._subDraft;const id=el.dataset.pid;const i=d.indexOf(id);if(i>=0)d.splice(i,1);else{if(d.length>=5){toast('5 already on the floor – take one off first');return}d.push(id)}drawSubs(!game().on.length)},
+  subdone:()=>{const g=game();const next=[...window._subDraft];if(next.length&&next.length!==5)toast(`${next.length} players on the floor`);
+    const prev=[...g.on];if(prev.join()!==next.join()){g.on=next;g.played=[...new Set([...(g.played||[]),...next])];g.events.push({id:uid6(),grp:uid6(),t:Date.now(),p:g.period,type:'sub',prev,next,on:[...next]});touch('g_'+g.id)}
+    sel=null;closeModal();renderLive()},
+  'shot-who':el=>{shot.who={team:el.dataset.team,pid:el.dataset.pid||null};shot.stage='result';renderShot()},
+  'shot-3':el=>{shot.three=el.dataset.v==='1';renderShot()},
+  'shot-made':()=>{if(shot.who.team==='us'&&game().on.length>1){shot.stage='ast';renderShot()}else finishShot(true)},
+  'shot-miss':()=>{shot.stage='miss';renderShot()},
+  'shot-cancel':()=>{shot=null;closeModal()},
+  'shot-ast':el=>{finishShot(true,el.dataset.team==='us'?[{team:'us',pid:el.dataset.pid,type:'ast'}]:null)},
+  'shot-blk':el=>{shot.blk=shot.blk===el.dataset.pid?null:el.dataset.pid;renderShot()},
+  'shot-oppblk':()=>{shot.blk=shot.blk==='opp'?null:'opp';renderShot()},
+  'shot-reb':el=>{const s=shot;const extra=[];
+    if(s.blk==='opp')extra.push({team:'opp',pid:null,type:'blk'});else if(s.blk)extra.push({team:'us',pid:s.blk,type:'blk'});
+    const rt=el.dataset.team;if(rt!=='none')extra.push({team:rt,pid:el.dataset.pid||null,type:rt===s.who.team?'oreb':'dreb'});
+    finishShot(false,extra)},
+  addplayer:()=>{const num=$('#np-num').value.trim(),name=$('#np-name').value.trim();if(!name&&!num){toast('Enter a number and name');return}
+    roster().push({id:uid6(),num,name:name||('Player '+num),pos:$('#np-pos').value,active:true});touch('main');renderRoster();setTimeout(()=>$('#np-num').focus(),30)},
+  delplayer:el=>{const p=P(el.dataset.pid);confirmBox(`Remove ${p.name}? Past stats will show as "(removed)". Marking inactive is usually better.`,()=>{S.main.roster=roster().filter(x=>x.id!==p.id);touch('main');renderRoster()},'Remove')},
+  toggleactive:el=>{const p=P(el.dataset.pid);p.active=p.active===false;touch('main');renderRoster()},
+  removedemo:()=>confirmBox('Remove all demo players, games and plays? Your own data stays.',()=>{removeDemo();render();toast('Demo data removed')},'Remove demo'),
+  loaddemo:()=>{seedDemo();render();toast('Demo data loaded')},
+  resetweights:()=>{S.main.weights={...DEFAULT_W};touch('main');renderRoster();toast('Hard hat values reset')},
+  csv:()=>{const g=S.games[boxGameId];deliverText(`pride-vs-${oppName(g).replace(/\W+/g,'-').toLowerCase()}-${g.date}.csv`,gameCSV(g),'Box score')},
+  backup:async()=>{const ok=await deliverText(`pride-stats-backup-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(S),'Backup');if(ok!==false){S.main.lastBackup=Date.now();touch('main');if(tab==='roster')renderRoster();else if(tab==='games')renderGames()}},
+  boxteam:el=>{boxTeam=el.dataset.v;renderBox()},
+  boxmode:el=>{boxMode=el.dataset.v;renderBox()},
+  boxtable:el=>{boxTable=el.dataset.v;renderBox()},
+  seasonmode:el=>{seasonMode=el.dataset.v;renderSeason()},
+  seasonchart:el=>{seasonChart=el.dataset.v;renderSeason()},
+  seasontable:el=>{seasonTable=el.dataset.v;renderSeason()},
+  wbcourt:el=>{if(WB.court===el.dataset.v)return;const go=()=>{WB.court=el.dataset.v;WB.frames=[{tokens:defaultTokens(WB.court),strokes:[]}];WB.fi=0;WB.playId=null;WB.name='';WB.dirty=false;renderBoard()};
+    if(WB.dirty||WB.frames.length>1||WB.frames[0].strokes.length)confirmBox('Switch court? The current board clears (saved plays are kept).',go,'Switch');else go()},
+  wbtool:el=>{WB.tool=el.dataset.v;renderBoard()},
+  wbcolor:el=>{WB.color=el.dataset.v;renderBoard()},
+  wbundo:()=>{wbFrame().strokes.pop();markWB();drawBoard()},
+  wbclear:()=>{wbFrame().strokes=[];markWB();drawBoard()},
+  wbdef:()=>{WB.showD=!WB.showD;renderBoard()},
+  wbreset:()=>{wbFrame().tokens=defaultTokens(WB.court);markWB();drawBoard()},
+  wbframe:el=>{WB.playing=false;WB.fi=+el.dataset.i;renderBoard()},
+  wbaddframe:()=>{const f=wbFrame();WB.frames.splice(WB.fi+1,0,{tokens:clone(f.tokens),strokes:[]});WB.fi++;WB.tool='move';markWB();renderBoard();toast('Drag players to their new spots')},
+  wbdelframe:()=>{if(WB.frames.length<2)return;WB.frames.splice(WB.fi,1);WB.fi=Math.max(0,WB.fi-1);markWB();renderBoard()},
+  wbplay:()=>wbAnimate(),
+  wbsave:()=>{if(WB.playId)wbStore();else wbSaveModal()},
+  wbdosave:()=>{WB.name=$('#wb-name').value.trim()||'Untitled play';closeModal();wbStore()},
+  wbnew:()=>{const go=()=>{WB.frames=[{tokens:defaultTokens(WB.court),strokes:[]}];WB.fi=0;WB.playId=null;WB.name='';WB.dirty=false;WB.playing=false;renderBoard()};if(WB.dirty&&WB.playId)confirmBox('Discard unsaved changes?',go,'Discard');else go()},
+  wbload:el=>{const p=S.plays[el.dataset.id];WB.playing=false;WB.playId=p.id;WB.name=p.name;WB.court=p.court;WB.frames=clone(p.frames);WB.fi=0;WB.dirty=false;renderBoard()},
+  wbdelete:()=>{const p=S.plays[WB.playId];confirmBox(`Delete play "${p.name}"?`,()=>{removeObj('p_'+p.id);WB.playId=null;WB.name='';renderBoard()})},
+};
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;if(el.tagName==='A')e.preventDefault();const f=ACT[el.dataset.act];if(f)f(el)});
+document.addEventListener('change',e=>{const el=e.target;
+  if(el.dataset.change==='boxgame'){boxGameId=el.value;boxFilter='all';renderBox()}
+  else if(el.dataset.change==='boxfilter'){boxFilter=el.value;renderBox()}
+  else if(el.dataset.change==='seasonshot'){seasonShotP=el.value;renderSeason()}
+  else if(el.dataset.change==='restore'){const f=el.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(!o.main||!o.games)throw 0;confirmBox('Replace all current data with this backup?',()=>{const old=[...Object.keys(S.games).map(k=>'g_'+k),...Object.keys(S.plays).map(k=>'p_'+k)];S=o;normalize();S.main.deleted=[];
+      for(const k of old)if(!objFor(k))pendingKeys.add(k);touch('main');Object.keys(S.games).forEach(k=>touch('g_'+k));Object.keys(S.plays).forEach(k=>touch('p_'+k));render();toast('Backup restored')},'Restore')}catch(x){toast('Not a Pride Stats backup file')}})}
+  else if(el.dataset.weight){const v=parseFloat(el.value);if(!isNaN(v)&&v>=0){S.main.weights[el.dataset.weight]=v;touch('main')}}
+  else if(el.dataset.pfield){const p=P(el.dataset.pid);if(p){p[el.dataset.pfield]=el.value.trim();touch('main')}}
+});
+document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;if(e.target.id==='np-name')ACT.addplayer();if(e.target.id==='wb-name')ACT.wbdosave();if(e.target.id==='ng-opp')ACT.creategame()});
+
+/* ============================================================
+   DEMO DATA  (flagged demo:true — removable from Roster › Data)
+   ============================================================ */
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const DEMO_ROSTER=[
+  // num,name,pos, usage, three-tendency, skill, reb, ast, hustle, minutes
+  ['1','Jalen Brooks','G',1.25,.42,1.04,.6,2.2,1.0,1.0],
+  ['3','Caleb Jones','G',1.15,.62,1.10,.5,1.0,.8,.95],
+  ['4','Darius Wright','G/F',1.0,.38,1.0,.9,1.0,1.1,.9],
+  ['10','Xavier Coleman','F',.85,.22,.98,1.4,.8,1.9,.85],
+  ['21','Isaiah Bell','F/C',1.1,.04,1.06,2.0,.6,1.2,.9],
+  ['2','Malik Harris','G',.9,.45,.95,.5,1.4,1.0,.6],
+  ['24','Cam Washington','C',.8,.02,.97,1.8,.4,1.0,.55],
+  ['15','Andre Mitchell','F',.8,.30,.96,1.1,.6,1.3,.5],
+  ['12','Jordan Price','G',.75,.50,.92,.4,1.0,.9,.35],
+  ['23','Trey Simmons','F',.7,.28,.94,1.0,.5,1.1,.3],
+  ['30','Elijah Ford','G',.6,.55,.9,.4,.7,.8,.15],
+  ['33','Nate Robinson','F/C',.6,.08,.92,1.3,.3,1.0,.15]];
+function seedDemo(){
+  const rng=mulberry(20261105);const pick=(arr,w)=>{const t=w.reduce((a,b)=>a+b,0);let r=rng()*t;for(let i=0;i<arr.length;i++){r-=w[i];if(r<=0)return arr[i]}return arr[arr.length-1]};
+  const players=DEMO_ROSTER.map((r,i)=>({id:'demo_p'+i,num:r[0],name:r[1],pos:r[2],active:true,demo:true,_t:{use:r[3],tp:r[4],sk:r[5],reb:r[6],ast:r[7],hu:r[8],min:r[9]}}));
+  const T=id=>players.find(p=>p.id===id)._t;
+  const sampleShot=(three,tpTend,big)=>{for(let k=0;k<200;k++){let x,y,g;
+      if(three){if(rng()<.3){x=rng()<.5?6+rng()*42:452+rng()*42;y=8+rng()*120}else{const a=(rng()*2-1)*1.15,d=200+rng()*45;x=250+Math.sin(a)*d;y=52.5+Math.cos(a)*d}}
+      else{const r=rng();if(r<(big?.62:.42)){const a=(rng()*2-1)*1.4,d=rng()*38;x=250+Math.sin(a)*d;y=52.5+Math.abs(Math.cos(a))*d}else if(r<(big?.85:.62)){x=250+(rng()*2-1)*56;y=92+rng()*94}else{const a=(rng()*2-1)*1.45,d=100+rng()*90;x=250+Math.sin(a)*d;y=52.5+Math.cos(a)*d}}
+      x=Math.round(x);y=Math.round(y);if(x<2||x>498||y<2||y>468)continue;if(isThree(x,y)===three)return [x,y]}return three?[250,280]:[250,60]};
+  const makeP=(x,y,sk,opp)=>{const z=ZMAP[zoneKey(x,y)].g;const base={rim:.60,paint:.43,mid:.38,c3:.37,ab3:.32}[z];return rng()<base*sk*(opp||1)};
+  const games=[
+    {opp:'Riverside',date:'2026-10-24',loc:'home',str:.92},
+    {opp:'Oak Hill Academy',date:'2026-10-28',loc:'away',str:1.25},
+    {opp:'Westbrook',date:'2026-10-31',loc:'home',str:.97},
+    {opp:'Central Prep',date:'2026-11-03',loc:'neutral',str:1.08}];
+  const out={};
+  games.forEach((G,gi)=>{
+    const gid='demo_g'+gi;const ev=[];let n=0;let on=players.slice(0,5).map(p=>p.id);const played=new Set(on);
+    const push=(p,e)=>ev.push(Object.assign({id:gid+'_e'+(n++),grp:gid+'_g'+n,t:n,p,on:[...on]},e));
+    const pickUs=key=>pick(on,on.map(id=>Math.max(.05,T(id)[key])));
+    for(let q=1;q<=4;q++){
+      for(let i=0;i<30;i++){
+        if(i%8===0&&!(q===1&&i===0)){const prev=[...on];const pool=[...players].filter(p=>p.active);const ch=[];const w=pool.map(p=>p._t.min*(q===4&&p._t.min>.8?1.4:1));
+          while(ch.length<5){const c=pick(pool,w);if(!ch.includes(c.id))ch.push(c.id)}on=ch;ch.forEach(id=>played.add(id));ev.push({id:gid+'_e'+(n++),grp:gid+'_g'+n,t:n,p:q,type:'sub',prev,next:[...on],on:[...on]})}
+        const off=i%2===0?'us':'opp';const def=off==='us'?'opp':'us';const os=off==='opp'?G.str:1;
+        // defensive hustle by us
+        if(def==='us'){if(rng()<.28)push(q,{team:'us',pid:pickUs('hu'),type:'defl'});if(rng()<.025){push(q,{team:'us',pid:pickUs('hu'),type:'charge'});push(q,{team:'opp',pid:null,type:'to',implied:true});push(q,{team:'opp',pid:null,type:'pf',implied:true});continue}}
+        if(rng()<.04&&def==='us')push(q,{team:'us',pid:pickUs('hu'),type:'dive'});
+        // turnover
+        if(rng()<(off==='us'?.15:.17*os)){if(rng()<.55){if(def==='us'){push(q,{team:'us',pid:pickUs('hu'),type:'stl'});push(q,{team:'opp',pid:null,type:'to',implied:true})}else{push(q,{team:'opp',pid:null,type:'stl'});push(q,{team:'us',pid:pickUs('use'),type:'to',implied:true})}}
+          else push(q,off==='us'?{team:'us',pid:pickUs('use'),type:'to'}:{team:'opp',pid:null,type:'to'});continue}
+        // shooting foul trip
+        if(rng()<.11){push(q,def==='us'?{team:'us',pid:pickUs('hu'),type:'pf'}:{team:'opp',pid:null,type:'pf'});const shooter=off==='us'?pickUs('use'):null;
+          for(let f=0;f<2;f++)push(q,{team:off,pid:shooter,type:'ft',made:rng()<(off==='us'?.67:.66)});continue}
+        if(rng()<.08)push(q,def==='us'?{team:'us',pid:pickUs('hu'),type:'pf'}:{team:'opp',pid:null,type:'pf'});
+        // shot loop
+        for(let tries=0;tries<3;tries++){
+          const shooter=off==='us'?pickUs('use'):null;const t=shooter?T(shooter):{tp:.36,sk:os,reb:1};
+          const big=shooter&&t.tp<.1;const three=rng()<t.tp;const [x,y]=sampleShot(three,t.tp,big);
+          const made=makeP(x,y,shooter?t.sk:1,off==='opp'?os:null);
+          push(q,{team:off,pid:shooter,type:'fg',made,three,x,y});
+          if(made){if(off==='us'&&rng()<.56){const others=on.filter(id=>id!==shooter);push(q,{team:'us',pid:pick(others,others.map(id=>T(id).ast)),type:'ast'})}break}
+          if(rng()<.07)push(q,def==='us'?{team:'us',pid:pickUs('reb'),type:'blk'}:{team:'opp',pid:null,type:'blk'});
+          const orb=rng()<(off==='us'?.31:.27*os);const rt=orb?off:def;
+          if(rng()<.92){const rp=rt==='us'?pickUs('reb'):null;push(q,{team:rt,pid:rp,type:orb?'oreb':'dreb'});if(rt==='us'&&rng()<.08)push(q,{team:'us',pid:rp,type:'loose'})}
+          if(!orb)break;
+        }
+      }
+    }
+    out[gid]={id:gid,opp:G.opp,date:G.date,loc:G.loc,status:'final',period:4,on:[...on],played:[...played],events:ev,createdAt:Date.now()-((4-gi)*86400000),demo:true};
+  });
+  players.forEach(p=>delete p._t);
+  S.main.roster=[...players,...S.main.roster.filter(p=>!p.demo)];
+  Object.assign(S.games,out);
+  const pid='demo_play1';
+  S.plays[pid]={id:pid,name:'DEMO · Horns flare',court:'half',demo:true,createdAt:Date.now(),frames:[
+    {tokens:{O1:[250,330],O2:[60,90],O3:[440,90],O4:[190,200],O5:[310,200],X1:[250,290],X2:[85,120],X3:[415,120],X4:[200,160],X5:[300,160],B:[268,322]},strokes:[{kind:'dribble',color:'#0b0d2a',pts:[[250,330],[300,300],[340,265]]},{kind:'screen',color:'#0000a8',pts:[[190,200],[220,215],[248,228]]},{kind:'cut',color:'#0b0d2a',pts:[[60,90],[90,170],[150,260],[170,300]]}]},
+    {tokens:{O1:[340,262],O2:[170,300],O3:[440,90],O4:[248,228],O5:[310,200],X1:[322,240],X2:[150,270],X3:[415,120],X4:[230,195],X5:[300,160],B:[352,256]},strokes:[{kind:'pass',color:'#d32f2f',pts:[[340,262],[260,290],[178,300]]}]},
+    {tokens:{O1:[340,262],O2:[170,300],O3:[440,90],O4:[248,228],O5:[310,200],X1:[322,240],X2:[185,275],X3:[415,120],X4:[230,195],X5:[300,160],B:[180,292]},strokes:[]}]};
+  S.main.demo=true;S.main.demoDismissed=false;
+  touch('main');Object.keys(out).forEach(id=>touch('g_'+id));touch('p_'+pid);
+}
+function removeDemo(){
+  Object.values(S.games).filter(g=>g.demo).forEach(g=>{setObj('g_'+g.id,undefined);if(!S.main.deleted.includes('g_'+g.id))S.main.deleted.push('g_'+g.id);pendingKeys.add('g_'+g.id)});
+  Object.values(S.plays).filter(p=>p.demo).forEach(p=>{setObj('p_'+p.id,undefined);if(!S.main.deleted.includes('p_'+p.id))S.main.deleted.push('p_'+p.id);pendingKeys.add('p_'+p.id)});
+  S.main.roster=S.main.roster.filter(p=>!p.demo);if(S.main.curGame&&!S.games[S.main.curGame])S.main.curGame=null;
+  S.main.demo=false;S.main.demoDismissed=true;if(WB.playId&&!S.plays[WB.playId]){WB.playId=null;WB.name=''}touch('main');
+}
+function maybeSeed(){}
+const hasDemo=()=>S.main.roster.some(p=>p.demo)||Object.values(S.games).some(g=>g.demo);
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+loadLocal();
+tab=game()&&game().status!=='final'?'live':'games';
+if(game())askedStarters.add(game().id);
+render();setSync('local');connect();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
