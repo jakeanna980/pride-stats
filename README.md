@@ -43,5 +43,5 @@ It's a plain static website: no server, no database, no build step.
 ## Updating the app later
 
 Replace `index.html` in the GitHub repo (**Add file → Upload files**). Vercel redeploys automatically in about 30 seconds.
-**Also open `sw.js` and bump `VERSION`** (e.g. `pride-v1` → `pride-v2`) so iPads pick up the new version.
+**Also open `sw.js` and bump `VERSION`** (e.g. `pride-v2` → `pride-v3`) so iPads pick up the new version.
 The next time the iPad opens the app online, it loads the update. Your saved stats are not affected.
