@@ -119,7 +119,7 @@ table.st th.hh{color:var(--hh)}
 .gc .meta{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.08em}
 .gc .sc{font-family:var(--mono);font-size:24px;text-align:right}
 .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;padding:3px 7px;border:1px solid currentColor;display:inline-block}
-.tag.W{color:var(--pos)}.tag.L{color:var(--neg)}.tag.T{color:var(--mute)}.tag.live{color:var(--hh)}
+.tag.W{color:var(--pos)}.tag.L{color:var(--neg)}.tag.T{color:var(--mute)}.tag.lvt{color:var(--hh)}
 .gc .gm{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--hair)}
 .gc .gm div{padding:8px 10px;border-right:1px solid var(--hair);font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:.08em}
 .gc .gm div:last-child{border-right:0}
@@ -190,7 +190,8 @@ table.st th.hh{color:var(--hh)}
 .sheet .sh .tg{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--mute);font-weight:400;text-transform:uppercase}
 .sheet .sh .who{color:var(--acc)}
 .sheet .sbd{padding:16px}
-.sheet .sf{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--hair)}
+.sheet .sf{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--hair);position:-webkit-sticky;position:sticky;bottom:0;background:var(--p1)}
+.nofg .sheet .sf>*+*{margin-left:8px}
 .sec{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:16px 0 8px}
 .sec:first-child{margin-top:0}
 .big2{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--hair2)}
@@ -273,6 +274,39 @@ table.st th.hh{color:var(--hh)}
 .stage .sth button{align-self:stretch;padding:0 16px;border-left:1px solid var(--hair2);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
 .stage .sth button.pri{background:var(--acc);color:#fff}
 .tok{cursor:grab}
+
+/* games tab (landscape) */
+.gwrap{display:grid;grid-template-columns:280px minmax(0,1fr);grid-gap:14px;align-items:start}
+.gside .pn{margin-bottom:12px}
+.b.big{width:100%;min-height:56px;font-size:13px;margin-bottom:12px}
+.srec{display:grid;grid-template-columns:1fr auto;padding:14px 14px 6px}
+.srec .k,.livecard .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.srec .v{font-family:var(--mono);font-size:40px;font-weight:500;color:var(--acc);letter-spacing:-.03em;line-height:1.1}
+.srec .v.sm{font-size:22px;color:var(--ink);text-align:right;margin-top:8px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--hair)}
+.sgrid div{padding:9px 14px;border-bottom:1px solid var(--hair)}
+.sgrid div:nth-child(odd){border-right:1px solid var(--hair)}
+.sgrid span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--mute)}
+.sgrid b{font-family:var(--mono);font-size:17px;font-weight:500}
+.livecard{border-left:4px solid var(--gold)}
+.lc-op{font-weight:800;font-size:17px;margin-top:6px}
+.lc-sc{font-family:var(--mono);font-size:28px;color:var(--acc)}
+table.st.gt td{padding:11px 8px}
+table.st.mpt td,table.st.mpt th{padding:6px 7px;font-size:12px}
+table.st.gt tr.grow{cursor:pointer}
+table.st.gt tr.grow:active td{background:var(--sel)}
+.acts-cell{white-space:nowrap}
+.acts-cell .b{margin-left:6px}
+.gmain{min-height:200px}
+/* MaxPreps */
+pre.mp{background:var(--bg);border:1px solid var(--hair2);padding:10px 12px;font-family:var(--mono);font-size:11.5px;max-height:180px;overflow:auto;margin:0;white-space:pre}
+ol.steps{margin:0;padding-left:20px;line-height:1.7;font-size:13.5px}
+.warn{border-left:4px solid var(--hot);background:#fff4ec;padding:8px 12px;font-size:13px;margin-bottom:10px}
+.mpgrid{display:grid;grid-template-columns:1fr 1fr;grid-gap:8px 12px}
+.mpgrid label{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--mute)}
+.mpgrid input{width:58%;padding:6px 8px;border:1px solid var(--hair2);background:var(--bg);font-family:var(--mono);font-size:12px;color:var(--ink)}
+/* flex-gap fallback for older Safari */
+.nofg .row>*+*,.nofg .ph>*+*,.nofg .ph .r>*+*,.nofg h1>*+*,.nofg .ga>*+*,.nofg .sbt>*+*,.nofg .legend>*+*,.nofg .hhb>*+*,.nofg .brandbox>*+*,.nofg .cw .ch>*+*,.nofg .stage .sth>*+*,.nofg .tool>*+*,.nofg .chip>*+*,.nofg #sync>*+*,.nofg .b>*+*,.nofg .sh>*+*{margin-left:10px}
 @media (orientation:portrait),(max-width:900px){
   .brand{display:none}
   #sync span{display:none}
@@ -294,6 +328,8 @@ table.st th.hh{color:var(--hh)}
   .wb{grid-template-columns:1fr;height:auto}
   .wbbox{flex:none;height:62vh}
   .g2,.g32{grid-template-columns:1fr}
+  .gwrap{grid-template-columns:minmax(0,1fr)}
+  .mpgrid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -324,6 +360,8 @@ window.addEventListener('unhandledrejection',function(e){var r=e.reason;if(r&&r.
 if(!Object.fromEntries){Object.fromEntries=function(it){var o={};Array.from(it).forEach(function(kv){o[kv[0]]=kv[1]});return o}}
 if(!Array.prototype.flatMap){Array.prototype.flatMap=function(f,t){return Array.prototype.concat.apply([],this.map(f,t))}}
 if(!Array.prototype.flat){Array.prototype.flat=function(){return Array.prototype.concat.apply([],this)}}
+/* Flexbox 'gap' arrived in Safari 14.1 – add spacing fallbacks on older iPads */
+(function(){try{var d=document.createElement('div');d.style.display='flex';d.style.flexDirection='column';d.style.rowGap='1px';d.appendChild(document.createElement('div'));d.appendChild(document.createElement('div'));document.body.appendChild(d);var ok=d.scrollHeight===1;d.parentNode.removeChild(d);if(!ok)document.documentElement.className+=' nofg'}catch(e){}})();
 </script>
 <script>/* Pointer Events polyfill for iOS 12 (only activates if the browser lacks them) */
 /*!
@@ -2955,29 +2993,71 @@ function sortedGames() {
 }
 function renderGames() {
   const gs = sortedGames();
-  let w = 0,
-    l = 0;
-  gs.filter(g => g.status === 'final').forEach(g => {
-    const r = gameResult(g).r;
-    if (r === 'W') w++;else if (r === 'L') l++;
-  });
-  view.innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:6px"><h1>Games <small>RECORD ${w}–${l} · ${gs.length} TRACKED</small></h1><button class="b pri" data-act="newgame">+ New game</button></div>
-  ${hasDemo() ? `<div class="pn" style="border-left:4px solid var(--gold)"><div class="pb row" style="justify-content:space-between"><span><b>Demo data loaded</b> <span class="mute">· sample roster, 4 simulated games and a play for testing. Real games you add are kept separately.</span></span><button class="b sm dng" data-act="removedemo">Remove demo data</button></div></div>` : ''}
-  ${Object.keys(S.games).length && (!S.main.lastBackup || Date.now() - S.main.lastBackup > 7 * 864e5) ? `<div class="pn" style="border-left:4px solid var(--hot)"><div class="pb row" style="justify-content:space-between"><span><b>Back up your stats</b> <span class="mute">· ${S.main.lastBackup ? 'last backup ' + Math.floor((Date.now() - S.main.lastBackup) / 864e5) + ' days ago' : 'no backup yet'}. Data lives only on this device.</span></span><button class="b sm pri" data-act="backup">Download backup</button></div></div>` : ''}
-  ${roster().length ? '' : `<div class="pn"><div class="pb"><b>Step 1:</b> add players on the <a href="#" data-act="tab" data-v="roster" style="color:var(--hh)">Roster</a> tab.</div></div>`}
-  ${gs.length ? `<div class="glist">${gs.map(g => {
+  const rows = gs.map(g => {
     const {
       b,
       r
     } = gameResult(g);
-    const live = g.status !== 'final';
-    const a = adv(b.us, b.opp);
-    return `<div class="gc"><div class="gt"><div><div class="meta">${esc(g.date || '')} · ${g.loc === 'away' ? 'AWAY' : g.loc === 'neutral' ? 'NEUTRAL' : 'HOME'}</div><div class="op">${g.loc === 'away' ? '@ ' : 'vs '}${esc(oppName(g))}</div></div>
-      <div style="text-align:right">${live ? `<span class="tag live">LIVE · ${perLabel(g.period)}</span>` : `<span class="tag ${r}">${r === 'T' ? 'TIE' : r === 'W' ? 'WIN' : 'LOSS'}</span>`}<div class="sc">${b.us.pts}<span class="mute">–${b.opp.pts}</span></div></div></div>
-      <div class="gm"><div>eFG%<b>${pc(a.efg)}</b></div><div>ORTG<b>${f1(a.ortg)}</b></div><div>TOV%<b>${pc(a.tov)}</b></div><div>HARD HAT<b style="color:var(--hh)">${f1(b.us.hh)}</b></div></div>
-      ${b.winners.length ? `<div class="meta" style="padding:8px 14px;border-bottom:1px solid var(--hair)">HARD HAT → <span style="color:var(--hh)">${b.winners.map(pname).map(esc).join(', ')}</span> (${f1(b.best)})</div>` : ''}
-      <div class="ga"><button class="b sm ${live ? 'pri' : ''}" data-act="opengame" data-id="${g.id}">${live ? 'Track live' : 'Tracker'}</button><button class="b sm" data-act="boxgame" data-id="${g.id}">Report</button><button class="b sm dng" data-act="delgame" data-id="${g.id}" style="margin-left:auto">Delete</button></div></div>`;
-  }).join('')}</div>` : `<div class="pn"><div class="empty">No games yet. Tap <b>+ New game</b> to start tracking.</div></div>`}`;
+    return {
+      g,
+      b,
+      r,
+      a: adv(b.us, b.opp)
+    };
+  });
+  const fin = rows.filter(x => x.g.status === 'final');
+  const w = fin.filter(x => x.r === 'W').length,
+    l = fin.filter(x => x.r === 'L').length;
+  const live = rows.filter(x => x.g.status !== 'final');
+  const n = fin.length;
+  const pf = fin.reduce((s, x) => s + x.b.us.pts, 0),
+    pa = fin.reduce((s, x) => s + x.b.opp.pts, 0);
+  const hats = {};
+  fin.forEach(x => x.b.winners.forEach(id => hats[id] = (hats[id] || 0) + 1));
+  const hatTop = Object.keys(hats).sort((a, c) => hats[c] - hats[a])[0];
+  let streak = '';
+  if (fin.length) {
+    const ord = fin.slice().sort((a, c) => (c.g.date || '').localeCompare(a.g.date || ''));
+    const t = ord[0].r;
+    let k = 0;
+    for (const x of ord) {
+      if (x.r === t) k++;else break;
+    }
+    streak = t + k;
+  }
+  const needBackup = Object.keys(S.games).length && (!S.main.lastBackup || Date.now() - S.main.lastBackup > 7 * 864e5);
+  view.innerHTML = `<div class="gwrap">
+  <div class="gside">
+    <div class="pn"><div class="ph"><span class="t"><b>01</b>Season</span></div>
+      <div class="srec"><div><div class="k">Record</div><div class="v">${w}–${l}</div></div><div><div class="k">Streak</div><div class="v sm">${streak || '–'}</div></div></div>
+      <div class="sgrid"><div><span>PPG</span><b>${n ? f1(pf / n) : '–'}</b></div><div><span>OPP PPG</span><b>${n ? f1(pa / n) : '–'}</b></div><div><span>MARGIN</span><b class="${cls(pf - pa)}">${n ? sgn((pf - pa) / n) : '–'}</b></div><div><span>HARD HATS</span><b style="font-size:13px">${hatTop ? esc(pname(hatTop)) + ' ×' + hats[hatTop] : '–'}</b></div></div>
+    </div>
+    <button class="b pri big" data-act="newgame">+ New game</button>
+    ${live.map(x => `<div class="pn livecard"><div class="pb"><div class="k"><span class="tag lvt">LIVE · ${perLabel(x.g.period)}</span></div><div class="lc-op">vs ${esc(oppName(x.g))}</div><div class="lc-sc">${x.b.us.pts}<span class="mute"> – ${x.b.opp.pts}</span></div><button class="b sm pri" data-act="opengame" data-id="${x.g.id}" style="width:100%;margin-top:10px">Resume tracking</button></div></div>`).join('')}
+    ${needBackup ? `<div class="pn" style="border-left:4px solid var(--hot)"><div class="pb"><b>Back up your stats</b><p class="note" style="margin:4px 0 10px">${S.main.lastBackup ? 'Last backup ' + Math.floor((Date.now() - S.main.lastBackup) / 864e5) + ' days ago.' : 'No backup yet.'} Data lives only on this device.</p><button class="b sm" data-act="backup" style="width:100%">Download backup</button></div></div>` : ''}
+    ${hasDemo() ? `<div class="pn" style="border-left:4px solid var(--gold)"><div class="pb"><b>Demo data loaded</b><p class="note" style="margin:4px 0 10px">Sample players and games for testing.</p><button class="b sm dng" data-act="removedemo" style="width:100%">Remove demo data</button></div></div>` : ''}
+    ${roster().length ? '' : `<div class="pn"><div class="pb"><b>Step 1:</b> add players on the <a href="#" data-act="tab" data-v="roster" style="color:var(--acc)">Roster</a> tab.</div></div>`}
+  </div>
+  <div class="pn flush gmain"><div class="ph"><span class="t"><b>02</b>Schedule &amp; results</span><span class="note" style="margin-left:auto">${gs.length} game${gs.length === 1 ? '' : 's'} · tap a row for the report</span></div>
+  ${gs.length ? `<div class="tw"><table class="st gt"><tr><th class="n">Date</th><th class="n">Opponent</th><th>Result</th><th>Score</th><th>eFG%</th><th>ORTG</th><th>TO</th><th class="n">Hard hat</th><th></th></tr>
+  ${rows.map(({
+    g,
+    b,
+    r,
+    a
+  }) => {
+    const isLive = g.status !== 'final';
+    const d = g.date ? new Date(g.date + 'T12:00:00') : null;
+    return `<tr data-act="boxgame" data-id="${g.id}" class="grow"><td class="n mono" style="font-weight:400">${d ? d.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric'
+    }) : ''}</td>
+    <td class="n"><span class="mute" style="font-weight:400">${g.loc === 'away' ? '@' : g.loc === 'neutral' ? 'vs (N)' : 'vs'}</span> ${esc(oppName(g))}</td>
+    <td>${isLive ? `<span class="tag lvt">LIVE</span>` : `<span class="tag ${r}">${r}</span>`}</td>
+    <td><b>${b.us.pts}–${b.opp.pts}</b></td><td>${pc(a.efg)}</td><td>${f1(a.ortg)}</td><td>${b.us.to}</td>
+    <td class="n hh" style="font-weight:600">${b.winners.length ? b.winners.map(id => esc(pnum(id))).join(' ') + ` <span class="mute" style="font-weight:400">${f1(b.best)}</span>` : '–'}</td>
+    <td class="acts-cell"><button class="b sm ${isLive ? 'pri' : ''}" data-act="opengame" data-id="${g.id}">${isLive ? 'Track' : 'Tracker'}</button><button class="b sm" data-act="maxpreps" data-id="${g.id}">MaxPreps</button><button class="b sm dng" data-act="delgame" data-id="${g.id}" aria-label="Delete">✕</button></td></tr>`;
+  }).join('')}</table></div>` : `<div class="empty">No games yet. Tap <b>+ New game</b> to start tracking.</div>`}</div></div>`;
 }
 function newGameModal() {
   const t = new Date();
@@ -3330,7 +3410,7 @@ function renderBox() {
   })}</tr>`;else if (boxTable === 'adv') table = `${advHead}${ids.map(id => `<tr><td class="j">${esc(P(id) ? P(id).num : '')}</td><td class="n">${esc(P(id) ? P(id).name : '(removed)')}</td>${advCols(b.Pl[id], b.us, onOff(b.lineups, id))}</tr>`).join('')}<tr class="tot"><td></td><td class="n">Pride</td>${advCols(b.us, b.us, null)}</tr>`;else table = `${hhHead}${ids.slice().sort((a, c) => b.Pl[c].hh - b.Pl[a].hh).map(id => `<tr><td class="j">${esc(P(id) ? P(id).num : '')}</td><td class="n">${esc(P(id) ? P(id).name : '(removed)')}</td>${hhCols(b.Pl[id], b.us.hh)}</tr>`).join('')}<tr class="tot"><td></td><td class="n">Pride</td>${hhCols(b.us, b.us.hh)}</tr>${b.opp.hh ? `<tr class="tot o"><td></td><td class="n">${esc(oppName(g))}</td>${hhCols(b.opp, 0)}</tr>` : ''}`;
   view.innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:12px">
     <div class="row"><select class="sel" data-change="boxgame" style="min-height:42px;font-size:13px">${gs.map(x => `<option value="${x.id}" ${x.id === g.id ? 'selected' : ''}>${esc(x.date)} · ${x.loc === 'away' ? '@' : 'vs'} ${esc(oppName(x))}</option>`).join('')}</select></div>
-    <div class="row"><button class="b sm" data-act="csv">Export CSV</button><button class="b sm pri" data-act="opengame" data-id="${g.id}">Tracker</button></div></div>
+    <div class="row"><button class="b sm" data-act="maxpreps" data-id="${g.id}">MaxPreps</button><button class="b sm" data-act="csv">Export CSV</button><button class="b sm pri" data-act="opengame" data-id="${g.id}">Tracker</button></div></div>
   <div class="kpis"><div class="kpi hl"><div class="k">Pride</div><div class="v">${b.us.pts}</div><div class="s">${g.status === 'final' ? 'FINAL' : 'LIVE · ' + perLabel(g.period)}</div></div><div class="kpi"><div class="k">${esc(oppName(g))}</div><div class="v">${b.opp.pts}</div><div class="s">MARGIN ${sgnI(b.us.pts - b.opp.pts)}</div></div>
     <div class="kpi"><div class="k">Off rating</div><div class="v">${f1(A.ortg)}</div><div class="s">PTS / 100 POSS</div></div>
     <div class="kpi"><div class="k">Def rating</div><div class="v">${oppTracked ? f1(A.drtg) : '–'}</div><div class="s">${oppTracked ? 'OPP PTS / 100' : 'TRACK OPP MISSES'}</div></div>
@@ -3371,9 +3451,125 @@ function gameCSV(g) {
   }));
   return lines.join('\n');
 }
+/* ============================================================
+   MAXPREPS EXPORT  (pipe-delimited .txt per MaxPreps' stat import spec)
+   Line 1 (optional): 32-char Stat Supplier ID. Line 2: "Jersey|Field|Field…".
+   Then one line per athlete. Field names must match MaxPreps exactly –
+   they're editable on the Roster tab.
+   ============================================================ */
+const MP_KEYS = ['pts', 'twom', 'twoa', 'tpm', 'tpa', 'ftm', 'fta', 'oreb', 'dreb', 'reb', 'ast', 'blk', 'stl', 'defl', 'to', 'charge', 'pf', 'fgm', 'fga'];
+/* MaxPreps' own box-score columns, in their order (Min and TF aren't tracked here) */
+const MP_COLS = [['pts', 'Pts'], ['twom', '2FG'], ['twoa', '2FGA'], ['tpm', '3FG'], ['tpa', '3FGA'], ['ftm', 'FT'], ['fta', 'FTA'], ['oreb', 'Off'], ['dreb', 'Def'], ['reb', 'Reb'], ['ast', 'Ast'], ['blk', 'Blk'], ['stl', 'Stl'], ['defl', 'Defl'], ['to', 'TO'], ['charge', 'Chrg'], ['pf', 'PF']];
+const MP_DEFAULT = {
+  pts: 'Points',
+  twom: 'TwoPointsMade',
+  twoa: 'TwoPointAttempts',
+  tpm: 'ThreePointsMade',
+  tpa: 'ThreePointAttempts',
+  ftm: 'FreeThrowsMade',
+  fta: 'FreeThrowAttempts',
+  oreb: 'OffensiveRebounds',
+  dreb: 'DefensiveRebounds',
+  reb: 'TotalRebounds',
+  ast: 'Assists',
+  blk: 'BlockedShots',
+  stl: 'Steals',
+  defl: 'Deflections',
+  to: 'Turnovers',
+  charge: 'Charges',
+  pf: 'PersonalFouls',
+  fgm: '',
+  fga: ''
+};
+const MP_LABEL = {
+  pts: 'Pts',
+  twom: '2FG',
+  twoa: '2FGA',
+  tpm: '3FG',
+  tpa: '3FGA',
+  ftm: 'FT',
+  fta: 'FTA',
+  oreb: 'Off',
+  dreb: 'Def',
+  reb: 'Reb',
+  ast: 'Ast',
+  blk: 'Blk',
+  stl: 'Stl',
+  defl: 'Defl',
+  to: 'TO',
+  charge: 'Chrg',
+  pf: 'PF',
+  fgm: 'FG total (not used)',
+  fga: 'FGA total (not used)'
+};
+const MP_SPEC = 'https://www.maxpreps.com/utility/stat_import/field_specs.aspx';
+function mpFields() {
+  return Object.assign({}, MP_DEFAULT, S.main.mpFields || {});
+}
+function mpVal(s, k) {
+  if (k === 'twom') return s.fgm - s.tpm;
+  if (k === 'twoa') return s.fga - s.tpa;
+  if (k === 'reb') return s.oreb + s.dreb;
+  return s[k];
+}
+function mpBuild(g) {
+  const b = computeBox(g);
+  const map = mpFields();
+  const keys = MP_KEYS.filter(k => (map[k] || '').trim());
+  const ids = Object.keys(b.Pl).filter(id => P(id)).sort((a, c) => (+P(a).num || 0) - (+P(c).num || 0));
+  const issues = [];
+  const seen = {};
+  ids.forEach(id => {
+    const j = String(P(id).num || '').trim();
+    if (!j) issues.push(`${P(id).name} has no jersey number`);else if (seen[j]) issues.push(`#${j} is used by both ${seen[j]} and ${P(id).name}`);else seen[j] = P(id).name;
+  });
+  const lines = [];
+  const sup = (S.main.mpSupplier || '').trim();
+  if (sup) lines.push(sup);
+  lines.push(['Jersey', ...keys.map(k => map[k].trim())].join('|'));
+  ids.forEach(id => lines.push([String(P(id).num || '').trim(), ...keys.map(k => mpVal(b.Pl[id], k))].join('|')));
+  return {
+    text: lines.join('\r\n'),
+    issues,
+    b,
+    count: ids.length
+  };
+}
+function mpModal(gid) {
+  const g = S.games[gid];
+  const m = mpBuild(g);
+  const pers = perList(g);
+  const qb = pers.map(p => computeBox(filterGame(g, p)));
+  window._mpGame = gid;
+  openModal(`<div class="sh">Export to MaxPreps<span class="tg">${esc(g.date)} · vs ${esc(oppName(g))}</span></div><div class="sbd">
+  ${g.status !== 'final' ? `<div class="warn">This game isn't marked final yet. End the game first so the stats are complete.</div>` : ''}
+  ${m.issues.map(x => `<div class="warn">${esc(x)}. Fix it on the Roster tab, since MaxPreps matches players by jersey.</div>`).join('')}
+  <div class="sec">1 · Quarter scores (type these into MaxPreps)</div>
+  <table class="st" style="max-width:520px"><tr><th class="n">Team</th>${pers.map(p => `<th>${p <= 4 ? p : perLabel(p)}</th>`).join('')}<th>T</th></tr>
+  <tr><td class="n">Pride</td>${qb.map(x => `<td>${x.us.pts}</td>`).join('')}<td><b>${m.b.us.pts}</b></td></tr>
+  <tr><td class="n">${esc(oppName(g))}</td>${qb.map(x => `<td>${x.opp.pts}</td>`).join('')}<td><b>${m.b.opp.pts}</b></td></tr></table>
+  <div class="sec">2 · Stat file · ${m.count} players</div><pre class="mp">${esc(m.text)}</pre>
+  <div class="sec">Or type it in by hand · same column order as MaxPreps</div>
+  <div class="tw" style="max-height:230px;overflow:auto;border:1px solid var(--hair2)"><table class="st mpt"><tr><th class="j">#</th><th class="n">Name</th>${MP_COLS.map(c => `<th>${c[1]}</th>`).join('')}</tr>
+  ${Object.keys(m.b.Pl).filter(id => P(id)).sort((a, c) => (+P(a).num || 0) - (+P(c).num || 0)).map(id => `<tr><td class="j">${esc(P(id).num)}</td><td class="n">${esc(P(id).name)}</td>${MP_COLS.map(c => `<td>${mpVal(m.b.Pl[id], c[0])}</td>`).join('')}</tr>`).join('')}
+  <tr class="tot"><td></td><td class="n">Team</td>${MP_COLS.map(c => `<td>${mpVal(m.b.us, c[0])}</td>`).join('')}</tr></table></div>
+  <p class="note" style="margin:6px 0 0">Players not listed didn't play, so leave them as "Did Not Play." Min and TF aren't tracked.</p>
+  <div class="sec">3 · On MaxPreps</div>
+  <ol class="steps"><li>Sign in to your MaxPreps coach/team admin account.</li><li>Open <b>Schedule</b>, find this game and choose <b>Enter Stats</b>.</li><li>Enter the quarter scores above, then <b>Save &amp; Import Stats</b>.</li><li><b>Choose File</b>, pick the downloaded .txt and choose <b>Import</b>.</li><li>Check the numbers, then <b>Calculate Team Totals</b> and <b>Publish</b>.</li></ol>
+  <p class="note" style="margin-top:10px">MaxPreps field names are set on the Roster tab under "MaxPreps export." If MaxPreps rejects a field, fix its name there.</p></div>
+  <div class="sf"><button class="b gh" data-act="close">Close</button><button class="b" data-act="mpcopy">Copy text</button><button class="b pri" data-act="mpdownload">Download .txt</button></div>`);
+}
+function mpSettingsPanel() {
+  const map = mpFields();
+  return `<div class="pn"><div class="ph"><span class="t"><b>04</b>MaxPreps export</span></div><div class="pb">
+  <p class="note" style="margin-top:0">Labels on the left are MaxPreps' column names. The boxes are the field names used in the import file, and they must match MaxPreps exactly. Check them against MaxPreps' basketball list: <a href="${MP_SPEC}" target="_blank" rel="noopener" style="color:var(--acc)">field specifications</a>. Leave a box blank to skip that stat.</p>
+  <div class="mpgrid">${MP_KEYS.map(k => `<label>${MP_LABEL[k]}<input value="${esc(map[k] || '')}" data-mpfield="${k}" autocapitalize="off" autocorrect="off" spellcheck="false"></label>`).join('')}</div>
+  <label class="f" style="margin-top:14px">Stat Supplier ID (optional)<input value="${esc(S.main.mpSupplier || '')}" data-mpsupplier="1" placeholder="Only if MaxPreps gave you one" autocapitalize="off" autocorrect="off" spellcheck="false" style="font-family:var(--mono);font-size:14px"></label>
+  <div class="row" style="margin-top:12px"><button class="b sm" data-act="mpreset">Reset field names</button></div></div></div>`;
+}
 async function deliverText(filename, text, label) {
   if (!downloads) {
-    const type = filename.endsWith('.csv') ? 'text/csv' : 'application/json';
+    const type = filename.endsWith('.csv') ? 'text/csv' : filename.endsWith('.txt') ? 'text/plain' : 'application/json';
     try {
       const file = new File([text], filename, {
         type
@@ -3611,7 +3807,7 @@ function renderRoster() {
   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px">${HH_TYPES.map(t => `<label class="f">${LABEL[t]}<input type="number" step="0.5" min="0" inputmode="decimal" value="${S.main.weights[t]}" data-weight="${t}" style="font-family:var(--mono)"></label>`).join('')}</div>
   <div class="row" style="margin-top:12px"><button class="b sm" data-act="resetweights">Reset to Alabama values</button></div></div></div>
   <div class="pn"><div class="ph"><span class="t"><b>03</b>Data</span></div><div class="pb"><p class="note" style="margin-top:0">Everything saves automatically on this device, in this browser. It does not sync to other devices. Download a backup every week or so and keep it in Files, iCloud Drive or email.<br><b style="color:var(--ink)">Last backup: ${S.main.lastBackup ? new Date(S.main.lastBackup).toLocaleDateString() : 'never'}</b></p>
-  <div class="row"><button class="b sm" data-act="backup">Download backup</button>${hasDemo() ? `<button class="b sm dng" data-act="removedemo">Remove demo data</button>` : `<button class="b sm gh" data-act="loaddemo">Load demo data</button>`}<label class="b sm gh">Restore from file<input type="file" accept=".json,application/json,text/plain" data-change="restore" style="display:none"></label></div></div></div></div></div>`;
+  <div class="row"><button class="b sm" data-act="backup">Download backup</button>${hasDemo() ? `<button class="b sm dng" data-act="removedemo">Remove demo data</button>` : `<button class="b sm gh" data-act="loaddemo">Load demo data</button>`}<label class="b sm gh">Restore from file<input type="file" accept=".json,application/json,text/plain" data-change="restore" style="display:none"></label></div></div></div>${mpSettingsPanel()}</div></div>`;
 }
 
 /* ============================================================
@@ -4256,6 +4452,31 @@ const ACT = {
     render();
     toast('Demo data loaded');
   },
+  maxprepslink: () => {},
+  maxpreps: el => mpModal(el.dataset.id),
+  mpdownload: () => {
+    const g = S.games[window._mpGame];
+    const m = mpBuild(g);
+    const nm = ('maxpreps-pride-vs-' + oppName(g) + '-' + (g.date || '')).toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/-+/g, '-');
+    deliverText(nm + '.txt', m.text, 'MaxPreps file');
+  },
+  mpcopy: async () => {
+    const g = S.games[window._mpGame];
+    try {
+      await navigator.clipboard.writeText(mpBuild(g).text);
+      toast('Copied');
+    } catch (e) {
+      toast('Copy not allowed here – use Download');
+    }
+  },
+  mpreset: () => {
+    S.main.mpFields = {
+      ...MP_DEFAULT
+    };
+    touch('main');
+    renderRoster();
+    toast('MaxPreps field names reset');
+  },
   resetweights: () => {
     S.main.weights = {
       ...DEFAULT_W
@@ -4454,6 +4675,14 @@ document.addEventListener('change', e => {
         toast('Not a Pride Stats backup file');
       }
     });
+  } else if (el.dataset.mpfield) {
+    S.main.mpFields = Object.assign({}, mpFields(), {
+      [el.dataset.mpfield]: el.value.replace(/[|\s]/g, '')
+    });
+    touch('main');
+  } else if (el.dataset.mpsupplier) {
+    S.main.mpSupplier = el.value.trim();
+    touch('main');
   } else if (el.dataset.weight) {
     const v = parseFloat(el.value);
     if (!isNaN(v) && v >= 0) {

@@ -40,8 +40,17 @@ It's a plain static website: no server, no database, no build step.
 - Deleting the Home Screen icon or clearing Safari website data **erases the stats**. Back up first.
 - Demo data for testing: Roster tab → **Load demo data**, then **Remove demo data** when done. Your real players and games are never touched.
 
+## Exporting a game to MaxPreps
+
+Games tab → **MaxPreps** on the game row (or the MaxPreps button on the Game Report).
+1. Type the quarter scores shown into MaxPreps' stat entry page for that game → **Save & Import Stats**.
+2. **Choose File** → the downloaded `.txt` → **Import** → check → **Calculate Team Totals** → **Publish**.
+
+MaxPreps matches players by **jersey number**, so keep numbers in the app identical to your MaxPreps roster.
+Field names are editable on the Roster tab ("MaxPreps export"); they must match MaxPreps' basketball field list exactly.
+
 ## Updating the app later
 
 Replace `index.html` in the GitHub repo (**Add file → Upload files**). Vercel redeploys automatically in about 30 seconds.
-**Also open `sw.js` and bump `VERSION`** (e.g. `pride-v3` → `pride-v4`) so iPads pick up the new version.
+**Also open `sw.js` and bump `VERSION`** (e.g. `pride-v5` → `pride-v6`) so iPads pick up the new version.
 The next time the iPad opens the app online, it loads the update. Your saved stats are not affected.
