@@ -163,7 +163,8 @@ table.st th.hh{color:var(--hh)}
 .cw .ch{display:flex;align-items:center;gap:10px;padding:6px 10px;border-bottom:1px solid var(--hair);min-height:44px}
 .cw .hint{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.03em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cw .hint b{color:var(--acc);font-weight:500}
-.cw svg{flex:1;min-height:0;width:100%;touch-action:manipulation;display:block}
+.courtbox{flex:1 1 auto;position:relative;min-height:0}
+.courtbox>svg{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:manipulation}
 .acts{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--hair2);background:var(--p1);overflow-y:auto;align-content:start}
 .acts h4{grid-column:1/-1;margin:0;padding:7px 12px;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--hair);background:var(--bg)}
 .ab{min-height:54px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:6px 12px;text-align:left;font-weight:700;font-size:14px}
@@ -209,7 +210,7 @@ table.st th.hh{color:var(--hh)}
 .pgrid button .x{font-family:var(--mono);font-size:10px;color:var(--mute);font-weight:400;margin-top:3px;display:block}
 #toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--navy);color:#fff;border-left:4px solid var(--gold);padding:10px 16px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
 #toast.show{opacity:1}
-.def{cursor:help;text-decoration:underline dotted;text-decoration-color:var(--dim);text-underline-offset:3px}
+.def{cursor:pointer;-webkit-tap-highlight-color:rgba(0,0,168,.08);text-decoration:underline dotted;text-decoration-color:var(--dim);text-underline-offset:3px}
 .deftip{position:fixed;z-index:80;max-width:280px;background:var(--navy);color:#fff;padding:10px 12px;border-left:3px solid var(--gold);box-shadow:0 10px 30px rgba(0,0,60,.25);pointer-events:none;font-family:var(--sans);font-size:12.5px;line-height:1.45;letter-spacing:0;text-transform:none;font-weight:400;opacity:0;transition:opacity .12s}
 .deftip.show{opacity:1}
 .deftip b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--gold);margin-bottom:3px;font-weight:500}
@@ -225,8 +226,11 @@ table.st th.hh{color:var(--hh)}
 .legend{display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mute)}
 .legend .ramp{width:120px;height:8px}
 .legend i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
-.chartbox{padding:10px;display:flex;justify-content:center}
-.chartbox svg{width:100%;max-width:560px;display:block}
+.chartbox{padding:10px}
+.ratio{position:relative;width:100%;max-width:600px;margin:0 auto}
+.ratio::before{content:"";display:block;padding-top:94.19%}
+.ratio>svg{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
+.ratio.tr::before{padding-top:35%}
 /* four factors */
 .ff{display:grid;grid-template-columns:120px 1fr 1fr;font-family:var(--mono);font-size:12px}
 .ff>div{padding:9px 12px;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:10px}
@@ -240,7 +244,8 @@ table.st th.hh{color:var(--hh)}
 .wb{display:grid;grid-template-columns:210px minmax(0,1fr) 210px;gap:10px;height:calc(100vh - 82px);height:calc(100dvh - 82px)}
 .wb .col{display:flex;flex-direction:column;border:1px solid var(--hair2);background:var(--p1);overflow-y:auto;min-height:0}
 .wb .stage{border:1px solid var(--hair2);background:var(--p1);display:flex;flex-direction:column;min-height:0}
-.wb svg{flex:1;min-height:0;width:100%;touch-action:none;user-select:none;-webkit-user-select:none;display:block}
+.wbbox{flex:1 1 auto;position:relative;min-height:0}
+#wbsvg{position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;display:block}
 .tool{display:flex;align-items:center;gap:12px;padding:0 14px;min-height:48px;border-bottom:1px solid var(--hair);font-size:13px;font-weight:600;text-align:left;position:relative}
 .tool.on{background:var(--sel)}
 .tool.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc)}
@@ -270,11 +275,14 @@ table.st th.hh{color:var(--hh)}
 .tok{cursor:grab}
 @media (orientation:portrait),(max-width:900px){
   .brand{display:none}
+  #sync span{display:none}
+  #sync{padding:0 12px}
+  #tabs button{padding:0 13px}
   .lvg{grid-template-columns:1fr;grid-template-rows:auto auto auto}
   .lvc.pl5{flex-direction:row;overflow-x:auto}
   .lvc.pl5 .pc{min-width:140px;border-right:1px solid var(--hair);border-bottom:0}
   .lvc .subs{margin-top:0;min-width:110px;border-top:0;border-left:1px solid var(--hair2)}
-  .cw svg{flex:none;height:36vh}
+  .courtbox{flex:none;height:46vh}
   .acts{grid-template-columns:repeat(4,1fr)}
   .ab:nth-of-type(even){border-right:1px solid var(--hair)}
   .live{height:auto}
@@ -284,7 +292,7 @@ table.st th.hh{color:var(--hh)}
   .sbt .score{font-size:34px;min-width:50px}
   .sbt .nm{max-width:110px}
   .wb{grid-template-columns:1fr;height:auto}
-  .wb svg{height:60vh;flex:none}
+  .wbbox{flex:none;height:62vh}
   .g2,.g32{grid-template-columns:1fr}
 }
 </style>
@@ -2881,17 +2889,44 @@ document.addEventListener('pointerover', e => {
   }
   defTimer = setTimeout(() => showDef(el), 450);
 });
-document.addEventListener('pointerdown', e => {
-  const el = e.target.closest('[data-def]');
-  if (!el || e.pointerType === 'mouse') {
-    if (e.pointerType !== 'mouse') hideDef();
+let defShownAt = 0,
+  defCur = null;
+function tapDef(el) {
+  clearTimeout(defHide);
+  if (defCur === el && defEl && defEl.classList.contains('show') && Date.now() - defShownAt > 800) {
+    hideDef();
+    defCur = null;
     return;
   }
-  clearTimeout(defHide);
+  defCur = el;
+  defShownAt = Date.now();
   showDef(el);
-  defHide = setTimeout(hideDef, 4000);
+  defHide = setTimeout(() => {
+    hideDef();
+    defCur = null;
+  }, 5000);
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest && e.target.closest('[data-def]');
+  if (el) {
+    if (e.pointerType === 'mouse') return;
+    tapDef(el);
+  } else if (defEl && defEl.classList.contains('show') && !e.target.closest('[data-tip]')) {
+    hideDef();
+    defCur = null;
+  }
 });
-window.addEventListener('scroll', hideDef, true);
+document.addEventListener('touchend', e => {
+  const el = e.target.closest && e.target.closest('[data-def]');
+  if (el && !(defCur === el && Date.now() - defShownAt < 600)) tapDef(el);
+}, {
+  passive: true
+});
+window.addEventListener('scroll', () => {
+  if (Date.now() - defShownAt > 400) hideDef();
+}, {
+  passive: true
+});
 
 /* ============================================================
    ROUTER
@@ -3006,9 +3041,9 @@ function renderLive() {
       <div class="ch"><span class="hint">${sel ? `<b>${esc(sel.team === 'opp' ? oppName(g) : pname(sel.pid))}</b> → tap court for a shot, or an action` : 'Select player → tap court (shot) or action'}</span>
       <span class="seg"><button class="${chartShow === 'us' ? 'on' : ''}" data-act="chartshow" data-v="us">HC</button><button class="${chartShow === 'opp' ? 'on' : ''}" data-act="chartshow" data-v="opp">Opp</button><button class="${chartShow === 'both' ? 'on' : ''}" data-act="chartshow" data-v="both">All</button></span>
       <span class="seg"><button class="${liveMode === 'dots' ? 'on' : ''}" data-act="livemode" data-v="dots">Dots</button><button class="${liveMode === 'hex' ? 'on' : ''}" data-act="livemode" data-v="hex">Hex</button></span></div>
-      ${courtSVG(inner, {
+      <div class="courtbox">${courtSVG(inner, {
     id: 'livecourt'
-  })}
+  })}</div>
     </div>
     <div class="acts">
       <h4>Free throws</h4><button class="ab ok" data-act="act" data-type="ftm">FT ✓</button><button class="ab no" data-act="act" data-type="ftx">FT ✕</button>
@@ -3309,7 +3344,7 @@ function renderBox() {
     <div class="note" style="padding:10px 14px">${boxTable === 'adv' ? 'TS% = PTS ÷ 2(FGA + 0.44·FTA) · USE% = share of team possessions used · ON/OFF = team net rating per 100 possessions with player on/off court (min 3 poss) · possessions ≈ FGA − OREB + TO + 0.44·FTA' : boxTable === 'hh' ? 'Hard hat = ' + HH_TYPES.map(t => `${LABEL[t]} ${S.main.weights[t]}`).join(' · ') : '+/− = scoring margin while on the floor.'}</div></div>
   <div class="g32"><div class="pn"><div class="ph"><span class="t"><b>02</b>Shot chart</span><div class="r"><span class="seg"><button class="${boxTeam === 'us' ? 'on' : ''}" data-act="boxteam" data-v="us">Pride</button><button class="${boxTeam === 'opp' ? 'on' : ''}" data-act="boxteam" data-v="opp">Opp</button></span>
     ${boxTeam === 'us' ? `<select class="sel" data-change="boxfilter"><option value="all">All players</option>${ids.filter(id => b.Pl[id].fga).map(id => `<option value="${id}" ${boxFilter === id ? 'selected' : ''}>${esc(pname(id))}</option>`).join('')}</select>` : ''}${modeSeg(boxMode, 'boxmode')}</div></div>
-    <div style="padding:10px 14px 0">${chartLegend(boxMode, boxTeam)}</div><div class="chartbox" id="boxchart">${shotChart(shots, boxTeam, boxMode)}</div><div class="note" style="padding:0 14px 12px">${shots.length} located FGA${boxMode === 'hex' ? ' · hex color shrunk toward average for small samples' : ''}</div></div>
+    <div style="padding:10px 14px 0">${chartLegend(boxMode, boxTeam)}</div><div class="chartbox" id="boxchart"><div class="ratio">${shotChart(shots, boxTeam, boxMode)}</div></div><div class="note" style="padding:0 14px 12px">${shots.length} located FGA${boxMode === 'hex' ? ' · hex color shrunk toward average for small samples' : ''}</div></div>
     <div><div class="pn"><div class="ph"><span class="t"><b>03</b>Four factors</span></div><div class="pb" style="padding:0">${fourFactors(A, O, 'Pride', oppName(g))}</div>${oppTracked ? '' : '<div class="note" style="padding:10px 14px">Opponent factors need their misses, rebounds and turnovers tracked.</div>'}</div>
     <div class="pn"><div class="ph"><span class="t"><b>04</b>Shot profile</span></div>${zoneTable(shots)}</div></div></div>
   <div class="g2"><div class="pn"><div class="ph"><span class="t"><b>05</b>Lineups</span><span class="note" style="margin-left:auto">sorted by +/−</span></div>${lus.length ? `<div class="tw"><table class="st"><tr><th class="n">Five</th><th>POSS</th><th>PTS</th><th>OPP</th><th>+/−</th><th>NET/100</th></tr>${lus.map(L => `<tr><td class="n" style="font-family:var(--mono);font-weight:500">${L.ids.map(id => esc(pnum(id))).join(' ')}</td><td>${f1(L.poss)}</td><td>${L.pf}</td><td>${L.pa}</td><td class="${cls(L.pm)}">${sgnI(L.pm)}</td><td class="${cls(L.net)}">${L.poss >= 4 ? sgn(L.net) : '<span class="mute">sm</span>'}</td></tr>`).join('')}</table></div>` : '<div class="empty">No lineup data yet.</div>'}</div>
@@ -3520,7 +3555,7 @@ function renderSeason() {
    <div class="kpi"><div class="k">TS% / eFG%</div><div class="v" style="font-size:20px">${pc(A.ts)} / ${pc(A.efg)}</div><div class="s">PPS ${f2(A.pps)}</div></div>
    <div class="kpi hl"><div class="k">Hard hat / gm</div><div class="v">${f1(T.hh / n)}</div><div class="s">${f1(A.hh100)} / 100 POSS</div></div></div>
   <div class="g32"><div class="pn"><div class="ph"><span class="t"><b>01</b>Shot chart</span><div class="r"><select class="sel" data-change="seasonshot"><option value="all">Team</option>${ids.filter(id => tot[id].fga).map(id => `<option value="${id}" ${seasonShotP === id ? 'selected' : ''}>${esc(pname(id))}</option>`).join('')}</select>${modeSeg(seasonChart, 'seasonchart')}</div></div>
-    <div style="padding:10px 14px 0">${chartLegend(seasonChart, 'us')}</div><div class="chartbox" id="seasonchart">${shotChart(sh, 'us', seasonChart)}</div><div class="note" style="padding:0 14px 12px">${sh.length} located FGA</div></div>
+    <div style="padding:10px 14px 0">${chartLegend(seasonChart, 'us')}</div><div class="chartbox" id="seasonchart"><div class="ratio">${shotChart(sh, 'us', seasonChart)}</div></div><div class="note" style="padding:0 14px 12px">${sh.length} located FGA</div></div>
     <div><div class="pn"><div class="ph"><span class="t"><b>02</b>Shot profile</span></div>${zoneTable(sh)}</div>
     <div class="pn"><div class="ph"><span class="t"><b>03</b>Four factors</span><span class="note" style="margin-left:auto">season</span></div>${fourFactors(A, O, 'Pride', 'Opponents')}</div></div></div>
   <div class="pn"><div class="ph"><span class="t"><b>04</b>Players</span><div class="r"><span class="seg"><button class="${seasonTable === 'trad' ? 'on' : ''}" data-act="seasontable" data-v="trad">Traditional</button><button class="${seasonTable === 'adv' ? 'on' : ''}" data-act="seasontable" data-v="adv">Advanced</button><button class="${seasonTable === 'hh' ? 'on' : ''}" data-act="seasontable" data-v="hh">Hard hat</button></span>${seasonTable !== 'adv' ? `<span class="seg"><button class="${seasonMode === 'avg' ? 'on' : ''}" data-act="seasonmode" data-v="avg">Per game</button><button class="${seasonMode === 'tot' ? 'on' : ''}" data-act="seasonmode" data-v="tot">Totals</button></span>` : ''}</div></div>
@@ -3560,7 +3595,7 @@ function trendChart(rows) {
     g += bar(x, r.us, 'var(--us)', lab) + bar(x + bw + 2, r.opp, 'var(--opp)', lab);
     if (rows.length <= 14) g += `<text x="${x + bw + 1}" y="${H - 10}" font-size="9" font-family="var(--mono)" fill="var(--mute)" text-anchor="middle">${esc(oppName(r.g).slice(0, 5).toUpperCase())}</text>`;
   });
-  return `<svg id="trend" viewBox="0 0 ${W} ${H}" width="100%">${g}<line x1="${pl}" x2="${W}" y1="${H - pb}" y2="${H - pb}" stroke="var(--hair2)"/></svg>`;
+  return `<div class="ratio tr" style="max-width:none"><svg id="trend" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${g}<line x1="${pl}" x2="${W}" y1="${H - pb}" y2="${H - pb}" stroke="var(--hair2)"/></svg></div>`;
 }
 
 /* ============================================================
@@ -3644,7 +3679,7 @@ function renderBoard() {
     <div class="colh">Ink</div><div class="sw">${['#0b0d2a', '#0000a8', '#d32f2f', '#12804a', '#d98200'].map(c => `<button class="${WB.color === c ? 'on' : ''}" data-act="wbcolor" data-v="${c}" aria-label="Color"><span style="background:${c}"></span></button>`).join('')}</div>
     <div class="colh">Edit</div><button class="wbtn" data-act="wbundo">↶ Undo line</button><button class="wbtn" data-act="wbclear">Clear lines</button><button class="wbtn" data-act="wbdef">${WB.showD ? 'Hide' : 'Show'} defense</button><button class="wbtn" data-act="wbreset">Reset positions</button></div>
   <div class="stage"><div class="sth"><span class="nm">${esc(WB.name || 'Untitled play')}${WB.dirty && WB.playId ? '<small>UNSAVED</small>' : ''}</span><button data-act="wbnew">New</button><button class="pri" data-act="wbsave">${WB.playId ? 'Save' : 'Save as play'}</button></div>
-    <svg id="wbsvg" touch-action="none" viewBox="${WB.court === 'half' ? '-8 -8 516 486' : '-8 -8 956 516'}" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="wbbox"><svg id="wbsvg" touch-action="none" viewBox="${WB.court === 'half' ? '-8 -8 516 486' : '-8 -8 956 516'}" preserveAspectRatio="xMidYMid meet"></svg></div>
     <div class="frames">${WB.frames.map((f, i) => `<button class="fd ${i === WB.fi ? 'on' : ''}" data-act="wbframe" data-i="${i}">${String(i + 1).padStart(2, '0')}</button>`).join('')}<button class="fa" data-act="wbaddframe">+ Step</button>${WB.frames.length > 1 ? `<button class="fa" data-act="wbdelframe">− Step</button><button class="fa pri" data-act="wbplay">${WB.playing ? '■ Stop' : '▶ Animate'}</button>` : ''}</div></div>
   <div class="col"><div class="colh">Playbook · ${plays.length}</div>${plays.length ? plays.map(p => `<button class="pl ${p.id === WB.playId ? 'on' : ''}" data-act="wbload" data-id="${p.id}"><div class="nm">${esc(p.name)}</div><div class="mt">${p.court === 'full' ? 'FULL' : 'HALF'} · ${p.frames.length} STEP${p.frames.length > 1 ? 'S' : ''}</div></button>`).join('') : '<div class="note" style="padding:14px">Saved plays appear here.</div>'}
   ${WB.playId ? `<button class="wbtn" style="color:var(--neg);margin-top:auto;border-top:1px solid var(--hair)" data-act="wbdelete">Delete play</button>` : ''}<div class="note" style="padding:12px 14px;border-top:1px solid var(--hair)">Draw step 1's actions → + Step → drag players to their new spots → repeat. Animate to replay.</div></div></div>`;

@@ -1,5 +1,5 @@
 // Pride Stats – offline support. Bump VERSION when you change any file.
-const VERSION = 'pride-v2';
+const VERSION = 'pride-v3';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest', './fonts/fonts.css',
   './fonts/inter-latin-400-normal.woff2', './fonts/inter-latin-500-normal.woff2', './fonts/inter-latin-600-normal.woff2',
